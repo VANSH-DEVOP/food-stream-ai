@@ -1,19 +1,47 @@
-import Navbar from "../components/layout/navbar";
+import Navbar from "@/components/layout/navbar";
+
+import HeroBanner from "@/components/home/hero-banner";
+
+import FoodRow from "@/components/home/food-row";
+
+import { foodItems } from "@/constants/food-data";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black px-6 pb-20 text-white">
       <Navbar />
 
-      <section className="p-10">
-        <h1 className="text-5xl font-bold">
-          Welcome to FoodStream AI
-        </h1>
+      <div className="mt-6">
+        <HeroBanner />
+      </div>
 
-        <p className="mt-4 text-zinc-400">
-          AI-powered personalized food platform
-        </p>
-      </section>
+      <div className="mt-10">
+        <FoodRow
+          title="Recommended For You"
+          items={foodItems}
+        />
+
+        <FoodRow
+          title="Trending Now"
+          items={foodItems}
+        />
+
+        <FoodRow
+          title="Veg Specials"
+          items={foodItems.filter(
+            (item) =>
+              item.category === "Veg"
+          )}
+        />
+
+        <FoodRow
+          title="Non-Veg Specials"
+          items={foodItems.filter(
+            (item) =>
+              item.category === "Non-Veg"
+          )}
+        />
+      </div>
     </main>
   );
 }
