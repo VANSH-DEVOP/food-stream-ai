@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 
+
 const profiles = [
   {
     id: "1",
@@ -21,6 +22,12 @@ const profiles = [
 
 export default function ProfilesPage() {
   const router = useRouter();
+  
+  const setSelectedProfile =
+  useAuthStore(
+    (state) =>
+      state.setSelectedProfile
+  );
 
   const user = useAuthStore(
     (state) => state.user
@@ -46,6 +53,11 @@ export default function ProfilesPage() {
         {profiles.map((profile) => (
           <div
             key={profile.id}
+            onClick={() => {
+                setSelectedProfile(profile);
+
+                router.push("/home");
+            }}
             className="cursor-pointer rounded-2xl border border-zinc-800 bg-zinc-900 p-8 transition hover:scale-105 hover:border-orange-500"
           >
             <div className="mb-4 h-24 w-24 rounded-full bg-orange-500" />

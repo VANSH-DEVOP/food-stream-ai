@@ -1,3 +1,6 @@
+"use client";
+import { useCartStore } from "@/store/cart-store";
+
 interface FoodCardProps {
   name: string;
   image: string;
@@ -11,6 +14,12 @@ export default function FoodCard({
   price,
   category,
 }: FoodCardProps) {
+
+    const addToCart =
+        useCartStore(
+        (state) => state.addToCart
+    );
+
   return (
     <div className="min-w-[250px] overflow-hidden rounded-2xl bg-zinc-900 transition hover:scale-105">
       <img
@@ -40,7 +49,16 @@ export default function FoodCard({
           ₹{price}
         </p>
 
-        <button className="mt-4 w-full rounded-lg bg-orange-500 p-2 font-semibold text-black transition hover:bg-orange-400">
+        <button className="mt-4 w-full rounded-lg bg-orange-500 p-2 font-semibold text-black transition hover:bg-orange-400"
+            onClick={() =>
+                addToCart({
+                id: Number(name.length + price),
+                name,
+                image,
+                price,
+                })
+            }
+        >
           Add to Cart
         </button>
       </div>

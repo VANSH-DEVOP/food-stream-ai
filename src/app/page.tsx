@@ -1,47 +1,46 @@
-import Navbar from "@/components/layout/navbar";
+"use client";
 
-import HeroBanner from "@/components/home/hero-banner";
+import { useEffect } from "react";
 
-import FoodRow from "@/components/home/food-row";
+import { useRouter } from "next/navigation";
 
-import { foodItems } from "@/constants/food-data";
+import { useAuthStore } from "@/store/auth-store";
 
-export default function Home() {
+export default function RootPage() {
+  const router = useRouter();
+
+  const user = useAuthStore(
+    (state) => state.user
+  );
+
+  const selectedProfile = useAuthStore(
+    (state) => state.selectedProfile
+  );
+
+  const isLoading = useAuthStore(
+    (state) => state.isLoading
+  );
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!user) {
+      router.push("/login");
+    } else if (!selectedProfile) {
+      router.push("/profiles");
+    } else {
+      router.push("/home");
+    }
+  }, [
+    user,
+    selectedProfile,
+    isLoading,
+    router,
+  ]);
+
   return (
-    <main className="min-h-screen bg-black px-6 pb-20 text-white">
-      <Navbar />
-
-      <div className="mt-6">
-        <HeroBanner />
-      </div>
-
-      <div className="mt-10">
-        <FoodRow
-          title="Recommended For You"
-          items={foodItems}
-        />
-
-        <FoodRow
-          title="Trending Now"
-          items={foodItems}
-        />
-
-        <FoodRow
-          title="Veg Specials"
-          items={foodItems.filter(
-            (item) =>
-              item.category === "Veg"
-          )}
-        />
-
-        <FoodRow
-          title="Non-Veg Specials"
-          items={foodItems.filter(
-            (item) =>
-              item.category === "Non-Veg"
-          )}
-        />
-      </div>
+    <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      Loading...
     </main>
   );
 }
