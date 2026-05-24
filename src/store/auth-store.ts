@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface UserProfile {
   id: string;
@@ -36,7 +37,9 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>()(
+    persist (
+  ((set) => ({
   isLoading: true,
 
   user: null,
@@ -54,5 +57,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setLoading: (loading) =>
   set({ isLoading: loading })
-})
+})),
+    {
+      name: "auth-storage",
+    }
+  )
 );

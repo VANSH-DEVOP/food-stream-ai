@@ -2,6 +2,7 @@
 import { useCartStore } from "@/store/cart-store";
 
 interface FoodCardProps {
+  id: number;
   name: string;
   image: string;
   price: number;
@@ -9,6 +10,7 @@ interface FoodCardProps {
 }
 
 export default function FoodCard({
+  id,
   name,
   image,
   price,
@@ -52,7 +54,7 @@ export default function FoodCard({
         <button className="mt-4 w-full rounded-lg bg-orange-500 p-2 font-semibold text-black transition hover:bg-orange-400"
             onClick={() =>
                 addToCart({
-                id: Number(name.length + price),
+                id,
                 name,
                 image,
                 price,

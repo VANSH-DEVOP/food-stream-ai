@@ -27,6 +27,7 @@ export default function FoodRow({
         {items.map((item) => (
           <FoodCard
             key={item.id}
+            id={item.id}
             name={item.name}
             image={item.image}
             price={item.price}

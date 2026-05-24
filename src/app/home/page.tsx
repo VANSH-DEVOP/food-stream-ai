@@ -13,6 +13,7 @@ import HeroBanner from "@/components/home/hero-banner";
 import FoodRow from "@/components/home/food-row";
 
 import { foodItems } from "@/constants/food-data";
+import CartDrawer from "@/components/layout/cart-drawer";
 
 
 export default function Home() {
@@ -59,6 +60,8 @@ export default function Home() {
 return (
   <main className="min-h-screen bg-black px-6 pb-20 text-white">
     <Navbar />
+
+    <CartDrawer />
 
     <div className="mt-6">
       <HeroBanner />
