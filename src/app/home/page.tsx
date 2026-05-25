@@ -14,6 +14,7 @@ import FoodRow from "@/components/home/food-row";
 
 import { foodItems } from "@/constants/food-data";
 import CartDrawer from "@/components/layout/cart-drawer";
+import FloatingCartButton from "@/components/layout/floating-cart-button";
 
 
 export default function Home() {
@@ -29,6 +30,17 @@ export default function Home() {
 
     const isLoading = useAuthStore(
     (state) => state.isLoading
+    );
+
+    const recommendedFoods =
+    foodItems.filter(
+      (item) =>
+        item.category ===
+          selectedProfile
+            ?.favoriteCategory &&
+        item.cuisine ===
+          selectedProfile
+            ?.cuisine
     );
 
     useEffect(() => {
@@ -58,7 +70,7 @@ export default function Home() {
 }
 
 return (
-  <main className="min-h-screen bg-black px-6 pb-20 text-white">
+  <main className="min-h-screen bg-black px-6 pb-20 pt-24 text-white">
     <Navbar />
 
     <CartDrawer />
@@ -69,8 +81,8 @@ return (
 
     <div className="mt-10">
       <FoodRow
-        title="Recommended For You"
-        items={foodItems}
+        title={`Recommended For ${selectedProfile.name}`}
+        items={recommendedFoods}
       />
 
       <FoodRow
@@ -94,6 +106,8 @@ return (
         )}
       />
     </div>
+
+    <FloatingCartButton />
   </main>
 );
 }
