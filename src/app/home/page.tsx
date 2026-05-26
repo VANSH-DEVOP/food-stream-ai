@@ -15,7 +15,8 @@ import FoodRow from "@/components/home/food-row";
 import { foodItems } from "@/constants/food-data";
 import CartDrawer from "@/components/layout/cart-drawer";
 import FloatingCartButton from "@/components/layout/floating-cart-button";
-
+import FilterDrawer from "@/components/layout/filter-drawer";
+import { useFilterStore } from "@/store/filter-store";
 
 export default function Home() {
     const router = useRouter();
@@ -32,16 +33,79 @@ export default function Home() {
     (state) => state.isLoading
     );
 
-    const recommendedFoods =
-    foodItems.filter(
-      (item) =>
-        item.category ===
-          selectedProfile
-            ?.favoriteCategory &&
-        item.cuisine ===
-          selectedProfile
-            ?.cuisine
+    const category = useFilterStore(
+      (state) => state.category
     );
+
+    const cuisine = useFilterStore(
+      (state) => state.cuisine
+    );
+
+    const spiceLevel =
+      useFilterStore(
+        (state) => state.spiceLevel
+      );
+
+    const filteredFoods =
+      foodItems.filter((item) => {
+        const matchesCategory =
+          category === "All" ||
+          item.category === category;
+
+        const matchesCuisine =
+          cuisine === "All" ||
+          item.cuisine === cuisine;
+
+        const matchesSpice =
+          spiceLevel === "All" ||
+          item.spiceLevel ===
+            spiceLevel;
+
+        return (
+          matchesCategory &&
+          matchesCuisine &&
+          matchesSpice
+        );
+      });
+
+    const recommendedFoods =
+      filteredFoods
+        .map((item) => {
+          let score = 0;
+
+          if (
+            item.category ===
+            selectedProfile
+              ?.favoriteCategory
+          ) {
+            score += 1;
+          }
+
+          if (
+            item.cuisine ===
+            selectedProfile
+              ?.cuisine
+          ) {
+            score += 1;
+          }
+
+          if (
+            item.spiceLevel ===
+            selectedProfile
+              ?.spiceLevel
+          ) {
+            score += 1;
+          }
+
+          return {
+            ...item,
+            score,
+          };
+        })
+
+        .sort((a, b) =>
+          b.score - a.score
+        );
 
     useEffect(() => {
         if (isLoading) return;
@@ -74,6 +138,8 @@ return (
     <Navbar />
 
     <CartDrawer />
+
+    <FilterDrawer />
 
     <div className="mt-6">
       <HeroBanner />

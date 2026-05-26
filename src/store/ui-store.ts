@@ -6,11 +6,17 @@ interface UIState {
   toggleCart: () => void;
 
   closeCart: () => void;
+  isFilterOpen: boolean;
+
+  toggleFilter: () => void;
+
+  closeFilter: () => void;
 }
 
 export const useUIStore =
   create<UIState>((set) => ({
     isCartOpen: false,
+    isFilterOpen: false,
 
     toggleCart: () =>
       set((state) => ({
@@ -22,4 +28,15 @@ export const useUIStore =
       set({
         isCartOpen: false,
       }),
+
+    toggleFilter: () =>
+    set((state) => ({
+        isFilterOpen:
+        !state.isFilterOpen,
+    })),
+
+    closeFilter: () =>
+    set({
+        isFilterOpen: false,
+    }),
   }));

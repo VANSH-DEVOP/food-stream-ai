@@ -29,7 +29,7 @@ export default function RootPage() {
     } else if (!selectedProfile) {
       router.push("/profiles");
     } else {
-      router.push("/home");
+      router.push("/profiles");
     }
   }, [
     user,

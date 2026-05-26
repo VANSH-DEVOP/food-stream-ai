@@ -28,6 +28,8 @@ interface CartState {
   decreaseQuantity: (
     id: number
   ) => void;
+
+  clearCart: () => void;
 }
 
 export const useCartStore =
@@ -107,6 +109,11 @@ export const useCartStore =
                 (item) =>
                   item.quantity > 0
               ),
+          });
+        },
+        clearCart: () => {
+          set({
+            items: [],
           });
         },
       }),

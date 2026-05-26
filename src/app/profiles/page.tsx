@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
-
+import { useFilterStore } from "@/store/filter-store";
 
 import { useState } from "react";
 
@@ -48,6 +48,12 @@ export default function ProfilesPage() {
   const [cuisine,
   setCuisine] =
   useState("Indian");
+
+  const resetFilters =
+  useFilterStore(
+    (state) =>
+      state.resetFilters
+  );
 
   useEffect(() => {
   async function loadProfiles() {
@@ -198,6 +204,8 @@ export default function ProfilesPage() {
             key={profile.id}
             onClick={() => {
                 setSelectedProfile(profile);
+
+                resetFilters();
 
                 router.push("/home");
             }}
