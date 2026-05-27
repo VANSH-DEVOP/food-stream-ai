@@ -19,6 +19,14 @@ export default function FloatingCartButton() {
     0
   );
 
+  const isCartOpen =
+  useUIStore(
+    (state) =>
+      state.isCartOpen
+  );
+
+  if (isCartOpen) return null;
+
   return (
     <button
       onClick={toggleCart}

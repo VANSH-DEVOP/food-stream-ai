@@ -2,6 +2,8 @@
 
 import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
+import { placeOrder } from "@/services/order-service";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function CartDrawer() {
   const items = useCartStore(
@@ -18,9 +20,6 @@ export default function CartDrawer() {
      (state) => state.isCartOpen
     );
 
-    const closeCart = useUIStore(
-     (state) => state.closeCart
-    );
     const increaseQuantity =
     useCartStore(
         (state) =>
@@ -32,6 +31,72 @@ export default function CartDrawer() {
         (state) =>
         state.decreaseQuantity
     );
+
+    const user = useAuthStore(
+    (state) => state.user
+    );
+
+    const selectedProfile =
+    useAuthStore(
+        (state) =>
+        state.selectedProfile
+    );
+
+    const clearCart = useCartStore(
+    (state) => state.clearCart
+    );
+
+    const closeCart = useUIStore(
+    (state) => state.closeCart
+    );
+
+    const subtotal = items.reduce(
+    (total, item) =>
+        total +
+        item.price * item.quantity,
+    0
+    );
+
+    const deliveryFee = 49;
+
+    const total =
+    subtotal + deliveryFee;
+
+    async function handlePlaceOrder() {
+    if (
+        !user ||
+        !selectedProfile ||
+        items.length === 0
+    ) {
+        return;
+    }
+
+    await placeOrder({
+        userId: user.uid,
+
+        profileId:
+        selectedProfile.id,
+
+        profileName:
+        selectedProfile.name,
+
+        items,
+
+        subtotal,
+
+        deliveryFee,
+
+        total,
+    });
+
+    clearCart();
+
+    closeCart();
+
+    alert(
+        "Order placed successfully!"
+    );
+    }
 
     if (!isCartOpen) return null;
   return (
@@ -104,6 +169,49 @@ export default function CartDrawer() {
             </button>
           </div>
         ))}
+
+        {items.length === 0 && (
+        <div className="mt-10 text-center text-zinc-400">
+            Your cart is empty.
+        </div>
+        )}
+
+    {items.length > 0 && (
+            <>
+        <div className="mt-6 border-t border-zinc-800 pt-4">
+        <div className="mb-2 flex justify-between">
+            <span>Subtotal</span>
+
+            <span>
+            ₹{subtotal}
+            </span>
+        </div>
+
+        <div className="mb-2 flex justify-between">
+            <span>Delivery</span>
+
+            <span>
+            ₹{deliveryFee}
+            </span>
+        </div>
+
+        <div className="flex justify-between text-xl font-bold">
+            <span>Total</span>
+
+            <span>
+            ₹{total}
+            </span>
+        </div>
+
+        <button
+        onClick={handlePlaceOrder}
+        className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black transition hover:bg-orange-400"
+        >
+        Place Order
+        </button>
+      </div>
+      </>
+    )}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ interface UIState {
   isFilterOpen: boolean;
 
   toggleFilter: () => void;
-
+  openCart: () => void;
   closeFilter: () => void;
 }
 
@@ -38,5 +38,10 @@ export const useUIStore =
     closeFilter: () =>
     set({
         isFilterOpen: false,
+    }),
+
+    openCart: () =>
+    set({
+        isCartOpen: true,
     }),
   }));

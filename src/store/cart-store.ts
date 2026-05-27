@@ -30,6 +30,10 @@ interface CartState {
   ) => void;
 
   clearCart: () => void;
+  
+  addMultipleToCart: (
+  items: CartItem[]
+) => void;
 }
 
 export const useCartStore =
@@ -111,6 +115,12 @@ export const useCartStore =
               ),
           });
         },
+        addMultipleToCart: (
+          newItems
+        ) =>
+          set({
+            items: newItems,
+          }),
         clearCart: () => {
           set({
             items: [],

@@ -67,6 +67,15 @@ export default function Navbar() {
         </button>
 
         <button
+          onClick={() =>
+            router.push("/orders")
+          }
+          className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700"
+        >
+          Orders
+        </button>
+
+        <button
           onClick={toggleFilter}
           className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700"
         >
