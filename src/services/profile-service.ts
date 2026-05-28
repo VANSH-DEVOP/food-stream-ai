@@ -8,6 +8,7 @@ import {
 
 import { db } from "@/lib/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
+import { UserProfile } from "@/types";
 
 export async function createProfile(
   userId: string,
@@ -44,7 +45,7 @@ export async function getProfiles(
       id: doc.id,
       ...doc.data(),
     })
-  );
+  ) as UserProfile[];
 }
 
 export async function deleteProfile(

@@ -1,4 +1,6 @@
-export const foodItems = [
+import { FoodItem } from "@/types";
+
+export const foodItems: FoodItem[] = [
   {
     id: 101,
     name: "Paneer Butter Masala",

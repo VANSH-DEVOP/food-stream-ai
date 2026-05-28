@@ -11,9 +11,10 @@ import {
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
+import { Order } from "@/types";
 
 export async function placeOrder(
-  order: any
+  order: Order
 ) {
   await addDoc(
     collection(db, "orders"),
@@ -42,5 +43,5 @@ export async function getOrders(
       id: doc.id,
       ...doc.data(),
     })
-  );
+  ) as Order[];
 }

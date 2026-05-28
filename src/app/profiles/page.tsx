@@ -13,6 +13,8 @@ import {
   deleteProfile,
 } from "@/services/profile-service";
 
+import { UserProfile } from "@/types";
+
 export default function ProfilesPage() {
   const router = useRouter();
   
@@ -27,7 +29,7 @@ export default function ProfilesPage() {
   );
 
   const [profiles, setProfiles] =
-  useState<any[]>([]);
+  useState<UserProfile[]>([]);
 
   const [newProfile, setNewProfile] =
   useState("");

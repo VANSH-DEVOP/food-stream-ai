@@ -1,12 +1,6 @@
 import FoodCard from "./food-card";
 
-interface FoodItem {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-}
+import { FoodItem } from "@/types";
 
 interface FoodRowProps {
   title: string;
@@ -27,11 +21,7 @@ export default function FoodRow({
         {items.map((item) => (
           <FoodCard
             key={item.id}
-            id={item.id}
-            name={item.name}
-            image={item.image}
-            price={item.price}
-            category={item.category}
+            item={item}
           />
         ))}
       </div>

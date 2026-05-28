@@ -1,14 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-interface UserProfile {
-  id: string;
-  name: string;
-  avatar?: string;
-  favoriteCategory: string;
-  spiceLevel: string;
-  cuisine: string;
-}
+import { UserProfile } from "@/types";
 
 interface AuthState {
   user: {

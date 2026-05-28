@@ -15,6 +15,8 @@ import { useUIStore } from "@/store/ui-store";
 import CartDrawer from "@/components/layout/cart-drawer";
 
 import FloatingCartButton from "@/components/layout/floating-cart-button";
+import { Order } from "@/types";
+import { CartItem } from "@/types";
 
 export default function OrdersPage() {
     const router = useRouter();
@@ -28,7 +30,7 @@ export default function OrdersPage() {
     );
 
     const [orders, setOrders] =
-        useState<any[]>([]);
+        useState<Order[]>([]);
 
     const addMultipleToCart =
     useCartStore(
@@ -101,7 +103,7 @@ export default function OrdersPage() {
 
             <div className="space-y-2">
                 {order.items.map(
-                (item: any) => (
+                (item: CartItem) => (
                     <div
                     key={item.id}
                     className="flex justify-between"
