@@ -1,36 +1,26 @@
 "use client";
-
-import { useEffect, useState } from "react";
-
-import { useRouter } from "next/navigation";
-
-import { useAuthStore } from "@/store/auth-store";
-
-import { getOrders } from "@/services/order-service";
-
 import Navbar from "@/components/layout/navbar";
 import { useCartStore } from "@/store/cart-store";
-
 import { useUIStore } from "@/store/ui-store";
 import CartDrawer from "@/components/layout/cart-drawer";
-
 import FloatingCartButton from "@/components/layout/floating-cart-button";
-import { Order } from "@/types";
 import { CartItem } from "@/types";
+import { useOrders } from "@/hooks/useOrders";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function OrdersPage() {
-    const router = useRouter();
+    
+    const {
+        user,
+        selectedProfile,
+        isLoading,
+    } = useAuthGuard();
 
-    const user = useAuthStore(
-        (state) => state.user
-    );
 
-    const isLoading = useAuthStore(
-        (state) => state.isLoading
-    );
-
-    const [orders, setOrders] =
-        useState<Order[]>([]);
+    const {
+        orders,
+        loading,
+    } = useOrders(user?.uid);
 
     const addMultipleToCart =
     useCartStore(
@@ -42,37 +32,13 @@ export default function OrdersPage() {
     (state) => state.openCart
     );
 
-  useEffect(() => {
-    if (
-      !isLoading &&
-      !user
-    ) {
-      router.push("/login");
-    }
-  }, [
-    user,
-    isLoading,
-    router,
-  ]);
-
-  useEffect(() => {
-    async function loadOrders() {
-      if (!user) return;
-
-      const data =
-        await getOrders(
-          user.uid
+    if (isLoading || loading) {
+        return (
+            <main className="flex min-h-screen items-center justify-center bg-black text-white">
+            Loading...
+            </main>
         );
-
-      setOrders(data);
     }
-
-    loadOrders();
-  }, [user]);
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <main className="min-h-screen bg-black px-6 pb-20 pt-24 text-white">
@@ -85,7 +51,20 @@ export default function OrdersPage() {
         Your Orders
       </h1>
 
-      <div className="space-y-6">
+      {orders.length === 0 && (
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
+                <h2 className="text-2xl font-bold">
+                    No Orders Yet
+                </h2>
+
+                <p className="mt-2 text-zinc-400">
+                    Start exploring and place your first order.
+                </p>
+            </div>
+        )}
+
+      { orders.length > 0 && (
+        <div className="space-y-6">
         {orders.map((order) => (
           <div
             key={order.id}
@@ -134,7 +113,7 @@ export default function OrdersPage() {
             </button>
             </div>
         ))}
-      </div>
+      </div>)}
     </main>
   );
 }

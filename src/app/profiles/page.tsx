@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useFilterStore } from "@/store/filter-store";
 
 import { useState } from "react";
+import { useProfiles } from "@/hooks/useProfiles";
 
 import {
   createProfile,
@@ -27,9 +28,6 @@ export default function ProfilesPage() {
   const user = useAuthStore(
     (state) => state.user
   );
-
-  const [profiles, setProfiles] =
-  useState<UserProfile[]>([]);
 
   const [newProfile, setNewProfile] =
   useState("");
@@ -57,18 +55,11 @@ export default function ProfilesPage() {
       state.resetFilters
   );
 
-  useEffect(() => {
-  async function loadProfiles() {
-    if (!user) return;
-
-    const data =
-      await getProfiles(user.uid);
-
-    setProfiles(data);
-  }
-
-  loadProfiles();
-  }, [user]);
+  const {
+    profiles,
+    loading,
+    refreshProfiles,
+  } = useProfiles(user?.uid);
 
   useEffect(() => {
     if (!user) {
@@ -80,13 +71,13 @@ export default function ProfilesPage() {
     return null;
   }
 
-  // if (profiles.length >= 4) {
-  //   alert(
-  //     "Maximum 4 profiles allowed."
-  //   );
-
-  //   return;
-  // }
+  if (loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+        Loading...
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
@@ -186,10 +177,7 @@ export default function ProfilesPage() {
                 cuisine
               );
 
-              const updatedProfiles =
-                await getProfiles(user.uid);
-
-              setProfiles(updatedProfiles);
+              await refreshProfiles();
 
               setNewProfile("");
             }}
@@ -224,10 +212,7 @@ export default function ProfilesPage() {
                   setSelectedProfile(null);
                 }
 
-                const updatedProfiles =
-                  await getProfiles(user!.uid);
-
-                setProfiles(updatedProfiles);
+                await refreshProfiles();
               }}
               className="absolute right-3 top-3 text-sm text-zinc-400 hover:text-red-500"
             >
