@@ -10,11 +10,8 @@ import { useProfiles } from "@/hooks/useProfiles";
 
 import {
   createProfile,
-  getProfiles,
   deleteProfile,
 } from "@/services/profile-service";
-
-import { UserProfile } from "@/types";
 
 export default function ProfilesPage() {
   const router = useRouter();

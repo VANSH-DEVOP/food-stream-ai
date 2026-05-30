@@ -8,4 +8,8 @@ export interface CartItem {
   image: string;
 
   quantity: number;
+  
+  profileId: string;
+
+  profileName: string;
 }

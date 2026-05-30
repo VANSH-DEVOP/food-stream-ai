@@ -57,6 +57,27 @@ export default function CartDrawer() {
     0
     );
 
+    const groupedItems =
+    items.reduce(
+        (acc, item) => {
+        if (
+            !acc[item.profileName]
+        ) {
+            acc[item.profileName] = [];
+        }
+
+        acc[item.profileName].push(
+            item
+        );
+
+        return acc;
+        },
+        {} as Record<
+        string,
+        typeof items
+        >
+    );
+
     const deliveryFee = 49;
 
     const total =
@@ -73,19 +94,9 @@ export default function CartDrawer() {
 
     await placeOrder({
         userId: user.uid,
-
-        profileId:
-        selectedProfile.id,
-
-        profileName:
-        selectedProfile.name,
-
         items,
-
         subtotal,
-
         deliveryFee,
-
         total,
     });
 
@@ -118,57 +129,83 @@ export default function CartDrawer() {
       </h2>
 
       <div className="h-full w-[350px] overflow-y-auto border-l border-zinc-800 bg-zinc-950 p-6 text-white">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-xl bg-zinc-900 p-4"
-          >
-            <img
-              src={item.image}
-              alt={item.name}
-              className="h-24 w-full rounded-lg object-cover"
-            />
-
-            <h3 className="mt-3 text-lg font-semibold">
-              {item.name}
-            </h3>
-
-            <p className="text-orange-500">
-              ₹{item.price}
-            </p>
-
-            <div className="mt-3 flex items-center gap-3">
-                <button
-                    onClick={() =>
-                    decreaseQuantity(item.id)
-                    }
-                    className="rounded bg-zinc-800 px-3 py-1"
+        {Object.entries(groupedItems).map(
+        ([profileName, profileItems]) => (
+            <div
+                key={profileName}
+                className="mb-8"
                 >
-                    -
-                </button>
+                <h2 className="mb-4 text-xl font-bold text-orange-500">
+                    {profileName}
+                </h2>
 
-                <span>{item.quantity}</span>
+                <div className="space-y-4">
+                    {profileItems.map((item) => (
+                    <div
+                        key={`${item.id}-${item.profileId}`}
+                        className="rounded-xl bg-zinc-900 p-4"
+                    >
+                        <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-24 w-full rounded-lg object-cover"
+                        />
 
-                <button
-                    onClick={() =>
-                    increaseQuantity(item.id)
-                    }
-                    className="rounded bg-zinc-800 px-3 py-1"
-                >
-                    +
-                </button>
+                        <h3 className="mt-3 text-lg font-semibold">
+                        {item.name}
+                        </h3>
+
+                        <p className="text-orange-500">
+                        ₹{item.price}
+                        </p>
+
+                        <div className="mt-3 flex items-center gap-3">
+                        <button
+                            onClick={() =>
+                            decreaseQuantity(
+                                item.id,
+                                item.profileId
+                            )
+                            }
+                            className="rounded bg-zinc-800 px-3 py-1"
+                        >
+                            -
+                        </button>
+
+                        <span>
+                            {item.quantity}
+                        </span>
+
+                        <button
+                            onClick={() =>
+                            increaseQuantity(
+                                item.id,
+                                item.profileId
+                            )
+                            }
+                            className="rounded bg-zinc-800 px-3 py-1"
+                        >
+                            +
+                        </button>
+                        </div>
+
+                        <button
+                        onClick={() =>
+                            removeFromCart(
+                            item.id,
+                            item.profileId
+                            )
+                        }
+                        className="mt-3 w-full rounded-lg bg-red-500 p-2 text-sm font-semibold text-white"
+                        >
+                        Remove
+                        </button>
+                    </div>
+                    ))}
+                </div>
             </div>
-
-            <button
-              onClick={() =>
-                removeFromCart(item.id)
-              }
-              className="mt-3 w-full rounded-lg bg-red-500 p-2 text-sm font-semibold text-white"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+        )
+        )}
 
         {items.length === 0 && (
         <div className="mt-10 text-center text-zinc-400">

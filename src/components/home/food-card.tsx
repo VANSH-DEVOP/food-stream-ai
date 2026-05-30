@@ -3,6 +3,7 @@
 import { useCartStore } from "@/store/cart-store";
 
 import { FoodItem } from "@/types";
+import { useAuthStore } from "@/store/auth-store";
 
 interface FoodCardProps {
   item: FoodItem;
@@ -17,6 +18,14 @@ export default function FoodCard({
       (state) => state.addToCart
     );
 
+
+    const selectedProfile =
+    useAuthStore(
+      (state) =>
+        state.selectedProfile
+    );
+
+    if (!selectedProfile) return;
   return (
     <div className="min-w-[250px] overflow-hidden rounded-2xl bg-zinc-900 transition hover:scale-105">
       <img
@@ -54,6 +63,12 @@ export default function FoodCard({
               name: item.name,
               image: item.image,
               price: item.price,
+
+              profileId:
+                selectedProfile.id,
+
+              profileName:
+                selectedProfile.name,
             })
           }
         >
