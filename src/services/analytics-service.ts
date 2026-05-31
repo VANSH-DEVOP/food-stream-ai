@@ -144,3 +144,16 @@ export function getFavoriteSpiceLevel(
       (a, b) => b[1] - a[1]
     )[0]?.[0];
 }
+
+export function getTotalOrders(
+  orders: Order[],
+  profileId: string
+) {
+  return orders.filter(
+    (order) =>
+      order.items.some(
+        (item) =>
+          item.profileId === profileId
+      )
+  ).length;
+}

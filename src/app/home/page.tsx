@@ -12,6 +12,7 @@ import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import OrderSummaryModal from '@/components/order/order-summary-modal';
 import { useOrders } from "@/hooks/useOrders";
+import ProfileInsights from "@/components/home/profile-insights";
 
 export default function Home() {
 
@@ -79,6 +80,12 @@ return (
     </div>
 
     <div className="mt-10">
+      <ProfileInsights
+        profile={selectedProfile}
+        orders={orders}
+        foods={foodItems}
+      />
+
       <FoodRow
         title={`Recommended For ${selectedProfile.name}`}
         items={recommendedFoods}
