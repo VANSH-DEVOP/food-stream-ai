@@ -10,6 +10,8 @@ import FilterDrawer from "@/components/layout/filter-drawer";
 import { useFilterStore } from "@/store/filter-store";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRecommendations } from "@/hooks/useRecommendations";
+import OrderSummaryModal from '@/components/order/order-summary-modal';
+import { useOrders } from "@/hooks/useOrders";
 
 export default function Home() {
 
@@ -45,11 +47,17 @@ export default function Home() {
     }
 
     const {
+      orders,
+    } = useOrders(user.uid);
+
+    const {
         recommendedFoods,
       } = useRecommendations({
         foods: foodItems,
 
         profile: selectedProfile!,
+
+        orders,
 
         category,
 
@@ -63,7 +71,7 @@ return (
     <Navbar />
 
     <CartDrawer />
-
+    <OrderSummaryModal />
     <FilterDrawer />
 
     <div className="mt-6">

@@ -8,6 +8,7 @@ import FloatingCartButton from "@/components/layout/floating-cart-button";
 import { CartItem } from "@/types";
 import { useOrders } from "@/hooks/useOrders";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import OrderSummaryModal from "@/components/order/order-summary-modal";
 
 export default function OrdersPage() {
   const {
@@ -48,7 +49,7 @@ export default function OrdersPage() {
       <Navbar />
 
       <CartDrawer />
-
+      <OrderSummaryModal />
       <FloatingCartButton />
 
       <h1 className="mb-10 text-4xl font-bold">
@@ -58,8 +59,12 @@ export default function OrdersPage() {
       {orders.length === 0 && (
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 text-center">
           <h2 className="text-2xl font-bold">
-            No Orders Yet
+            🍽️ No Orders Yet
           </h2>
+
+          <p className="mt-2 text-zinc-400">
+            Your previous orders will appear here.
+          </p>
 
           <p className="mt-2 text-zinc-400">
             Start exploring and place your first order.
@@ -164,6 +169,48 @@ export default function OrdersPage() {
                   )
                 )}
 
+                <div className="mt-6 border-t border-zinc-800 pt-4">
+                    <div className="flex justify-between">
+                        <span>
+                        Subtotal
+                        </span>
+
+                        <span>
+                        ₹{order.subtotal}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span>
+                        Delivery
+                        </span>
+
+                        <span>
+                        ₹{order.deliveryFee}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span>
+                        GST
+                        </span>
+
+                        <span>
+                        ₹{order.gst}
+                        </span>
+                    </div>
+
+                    <div className="mt-2 flex justify-between text-lg font-bold">
+                        <span>
+                        Total
+                        </span>
+
+                        <span>
+                        ₹{order.total}
+                        </span>
+                    </div>
+                </div>
+
                 <button
                   onClick={() => {
                     addMultipleToCart(
@@ -172,9 +219,9 @@ export default function OrdersPage() {
 
                     openCart();
                   }}
-                  className="mt-4 rounded-lg bg-orange-500 px-4 py-2 font-semibold text-black"
+                  className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black"
                 >
-                  Reorder
+                  Reorder all items
                 </button>
               </div>
             );

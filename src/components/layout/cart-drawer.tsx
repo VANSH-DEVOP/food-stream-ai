@@ -4,6 +4,7 @@ import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
 import { placeOrder } from "@/services/order-service";
 import { useAuthStore } from "@/store/auth-store";
+import { useOrderStore } from "@/store/order-store";
 
 export default function CartDrawer() {
   const items = useCartStore(
@@ -83,31 +84,11 @@ export default function CartDrawer() {
     const total =
     subtotal + deliveryFee;
 
-    async function handlePlaceOrder() {
-    if (
-        !user ||
-        !selectedProfile ||
-        items.length === 0
-    ) {
-        return;
-    }
-
-    await placeOrder({
-        userId: user.uid,
-        items,
-        subtotal,
-        deliveryFee,
-        total,
-    });
-
-    clearCart();
-
-    closeCart();
-
-    alert(
-        "Order placed successfully!"
+    const openOrderSummary =
+    useOrderStore(
+        (state) =>
+        state.openOrderSummary
     );
-    }
 
     if (!isCartOpen) return null;
   return (
@@ -241,7 +222,7 @@ export default function CartDrawer() {
         </div>
 
         <button
-        onClick={handlePlaceOrder}
+        onClick={openOrderSummary}
         className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black transition hover:bg-orange-400"
         >
         Place Order

@@ -12,6 +12,8 @@ export interface Order {
 
   deliveryFee: number;
 
+  gst: number;
+
   total: number;
 
   createdAt?: Timestamp;
