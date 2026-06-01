@@ -13,6 +13,7 @@ import { useRecommendations } from "@/hooks/useRecommendations";
 import OrderSummaryModal from '@/components/order/order-summary-modal';
 import { useOrders } from "@/hooks/useOrders";
 import ProfileInsights from "@/components/home/profile-insights";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function Home() {
 
@@ -35,28 +36,53 @@ export default function Home() {
         (state) => state.spiceLevel
       );
 
-    if (
-      isLoading ||
-      !user ||
-      !selectedProfile
-    ) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
-        Loading...
-      </main>
-      );
-    }
-
     const {
       orders,
-    } = useOrders(user.uid);
+    } = useOrders(user?.uid ?? "");
+
+    const {
+      favorites,
+      refreshFavorites,
+    } = useFavorites(
+      user?.uid ?? ""
+    );
+
+    const safeProfile =
+    selectedProfile ?? {
+      id: "",
+      name: "",
+      favoriteCategory: "",
+      cuisine: "",
+      spiceLevel: "",
+      userId: "",
+    };
+
+    const favoriteFoodIds =
+      favorites
+        .filter(
+          (favorite) =>
+            favorite.profileId ===
+            safeProfile.id
+        )
+        .map(
+          (favorite) =>
+            favorite.foodId
+        );
+
+    const favoriteFoods =
+      foodItems.filter(
+        (food) =>
+          favoriteFoodIds.includes(
+            food.id
+          )
+      );
 
     const {
         recommendedFoods,
       } = useRecommendations({
         foods: foodItems,
 
-        profile: selectedProfile!,
+        profile: safeProfile,
 
         orders,
 
@@ -66,6 +92,18 @@ export default function Home() {
 
         spiceLevel,
       });
+
+      if (
+        isLoading ||
+        !user ||
+        !selectedProfile
+      ) {
+      return (
+        <main className="flex min-h-screen items-center justify-center bg-black text-white">
+          Loading...
+        </main>
+        );
+      }
 
 return (
   <main className="min-h-screen bg-black px-6 pb-20 pt-24 text-white">
@@ -86,14 +124,27 @@ return (
         foods={foodItems}
       />
 
+      {favoriteFoods.length > 0 && (
+        <FoodRow
+          title={`❤️ ${selectedProfile.name}'s Favorites`}
+          items={favoriteFoods}
+          favorites={favorites}
+          refreshFavorites={refreshFavorites}
+        />
+      )}
+
       <FoodRow
         title={`Recommended For ${selectedProfile.name}`}
         items={recommendedFoods}
+        favorites={favorites}
+        refreshFavorites={refreshFavorites}
       />
 
       <FoodRow
         title="Trending Now"
         items={foodItems}
+        favorites={favorites}
+        refreshFavorites={refreshFavorites}
       />
 
       <FoodRow
@@ -102,6 +153,8 @@ return (
           (item) =>
             item.category === "Veg"
         )}
+        favorites={favorites}
+        refreshFavorites={refreshFavorites}
       />
 
       <FoodRow
@@ -110,6 +163,8 @@ return (
           (item) =>
             item.category === "Non-Veg"
         )}
+        favorites={favorites}
+        refreshFavorites={refreshFavorites}
       />
     </div>
 

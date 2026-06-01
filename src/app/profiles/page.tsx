@@ -7,7 +7,7 @@ import { useFilterStore } from "@/store/filter-store";
 
 import { useState } from "react";
 import { useProfiles } from "@/hooks/useProfiles";
-
+import { deleteFavoritesByProfile } from "@/services/favorite-service";
 import {
   createProfile,
   deleteProfile,
@@ -201,7 +201,10 @@ export default function ProfilesPage() {
             <button
               onClick={async (e) => {
                 e.stopPropagation();
-
+              try{
+                await deleteFavoritesByProfile(
+                  profile.id
+                );
                 await deleteProfile(profile.id);
                 if (
                   selectedProfile?.id === profile.id
@@ -210,6 +213,14 @@ export default function ProfilesPage() {
                 }
 
                 await refreshProfiles();
+              }
+              catch (error){
+                console.error(error);
+
+                alert(
+                  "Failed to delete profile."
+                );
+              }
               }}
               className="absolute right-3 top-3 text-sm text-zinc-400 hover:text-red-500"
             >

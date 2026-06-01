@@ -9,12 +9,17 @@ import { CartItem } from "@/types";
 import { useOrders } from "@/hooks/useOrders";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import OrderSummaryModal from "@/components/order/order-summary-modal";
+import { useProfiles } from "@/hooks/useProfiles";
 
 export default function OrdersPage() {
   const {
     user,
     isLoading,
   } = useAuthGuard();
+
+  const {
+    profiles,
+  } = useProfiles(user?.uid);
 
   const {
     orders,
@@ -213,8 +218,41 @@ export default function OrdersPage() {
 
                 <button
                   onClick={() => {
+
+                    const validItems =
+                      order.items.filter(
+                        (item) =>
+                          profiles.some(
+                            (profile) =>
+                              profile.id ===
+                              item.profileId
+                          )
+                      );
+
+                    if (
+                      validItems.length === 0
+                    ) {
+                      alert(
+                        "All profiles from this order have been deleted."
+                      );
+
+                      return;
+                    }
+
+                    if (
+                      validItems.length <
+                      order.items.length
+                    ) {
+                      alert(
+                        `${
+                          order.items.length -
+                          validItems.length
+                        } item(s) were skipped because their profile no longer exists.`
+                      );
+                    }
+
                     addMultipleToCart(
-                      order.items
+                      validItems
                     );
 
                     openCart();

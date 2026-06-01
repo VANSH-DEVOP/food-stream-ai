@@ -1,15 +1,19 @@
 import FoodCard from "./food-card";
-
+import { Favorite } from "@/types";
 import { FoodItem } from "@/types";
 
 interface FoodRowProps {
   title: string;
   items: FoodItem[];
+  favorites: Favorite[];
+  refreshFavorites: () => Promise<void>;
 }
 
 export default function FoodRow({
   title,
   items,
+  favorites,
+  refreshFavorites,
 }: FoodRowProps) {
   return (
     <section className="mb-10">
@@ -22,6 +26,8 @@ export default function FoodRow({
           <FoodCard
             key={item.id}
             item={item}
+            favorites={favorites}
+            refreshFavorites={refreshFavorites}
           />
         ))}
       </div>

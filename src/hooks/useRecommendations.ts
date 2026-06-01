@@ -29,6 +29,14 @@ export function useRecommendations({
   cuisine,
   spiceLevel,
 }: RecommendationParams) {
+
+  if (!profile?.id) {
+    return {
+      filteredFoods: foods,
+      recommendedFoods: foods,
+    };
+  }
+
   const filteredFoods =
     foods.filter((item) => {
       const matchesCategory =
