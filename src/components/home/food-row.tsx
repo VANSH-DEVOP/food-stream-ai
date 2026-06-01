@@ -7,6 +7,7 @@ interface FoodRowProps {
   items: FoodItem[];
   favorites: Favorite[];
   refreshFavorites: () => Promise<void>;
+  showReasons?:boolean;
 }
 
 export default function FoodRow({
@@ -14,6 +15,7 @@ export default function FoodRow({
   items,
   favorites,
   refreshFavorites,
+  showReasons = false,
 }: FoodRowProps) {
   return (
     <section className="mb-10">
@@ -28,6 +30,7 @@ export default function FoodRow({
             item={item}
             favorites={favorites}
             refreshFavorites={refreshFavorites}
+            showReasons = {showReasons}
           />
         ))}
       </div>

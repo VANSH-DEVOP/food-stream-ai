@@ -1,7 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/cart-store";
-
+import { Heart } from "lucide-react";
 import { FoodItem } from "@/types";
 import { useAuthStore } from "@/store/auth-store";
 import {
@@ -16,12 +16,15 @@ interface FoodCardProps {
   favorites: Favorite[];
 
   refreshFavorites: () => Promise<void>;
+
+  showReasons? : boolean;
 }
 
 export default function FoodCard({
   item,
   favorites,
   refreshFavorites,
+  showReasons = false,
 }: FoodCardProps) {
 
   const addToCart =
@@ -86,49 +89,66 @@ export default function FoodCard({
 
     if (!selectedProfile) return null;
   return (
-    <div className="min-w-[250px] overflow-hidden rounded-2xl bg-zinc-900 transition hover:scale-105">
+    <div className="flex h-[470px] min-w-[320px] flex-col overflow-hidden rounded-2xl bg-zinc-900">
       <img
         src={item.image}
         alt={item.name}
         className="h-40 w-full object-cover"
       />
 
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between">
-          <h2 className="text-lg font-bold">
+          <h2 className="line-clamp-2 text-2xl font-bold">
             {item.name}
           </h2>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={
-                handleFavorite
-              }
-              className="text-xl"
-            >
-              {existingFavorite
-                ? "❤️"
-                : "🤍"}
-            </button>
-
-            <span
-              className={`rounded-full px-2 py-1 text-xs ${
-                item.category === "Veg"
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }`}
-            >
-              {item.category}
-            </span>
-          </div>
+          <button
+            onClick={handleFavorite}
+            className="rounded-full p-2 text-2xl transition hover:bg-zinc-800"
+          >
+            <Heart
+              size={24}
+              fill={existingFavorite ? "currentColor" : "none"}
+            />
+          </button>
         </div>
 
-        <p className="mt-2 text-orange-500">
+        <div className="mt-3">
+          <span
+            className={`rounded-full border px-4 py-1 text-sm font-medium ${
+              item.category === "Veg"
+                ? "border-green-500 text-green-400"
+                : "border-red-500 text-red-400"
+            }`}
+          >
+            {item.category}
+          </span>
+        </div>
+
+        <p className="mt-4 text-3xl font-semibold text-orange-500">
           ₹{item.price}
         </p>
 
+        <div className="mt-3 h-[70px] text-sm text-zinc-400">
+          {showReasons &&
+          Array.isArray((item as any).reasons) ? (
+            (item as any).reasons
+              .slice(0, 2)
+              .map((reason: string) => (
+                <div key={reason}>
+                  ✓ {reason}
+                </div>
+              ))
+          ) : (
+            <div className="opacity-0">
+              <div>placeholder</div>
+              <div>placeholder</div>
+            </div>
+          )}
+        </div>
+
         <button
-          className="mt-4 w-full rounded-lg bg-orange-500 p-2 font-semibold text-black transition hover:bg-orange-400"
+          className="mt-auto w-full rounded-lg bg-orange-500 p-3 font-semibold text-black transition hover:bg-orange-400"
           onClick={() =>
             addToCart({
               id: item.id,

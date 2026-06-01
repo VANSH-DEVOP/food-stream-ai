@@ -95,12 +95,17 @@ export function useRecommendations({
     filteredFoods
       .map((item) => {
         let score = 0;
+        const reasons: string[] = [];
 
         if (
           item.category ===
           profile.favoriteCategory
         ) {
           score += 1;
+
+          reasons.push(
+            "Matches favorite category"
+          );
         }
 
         if (
@@ -108,6 +113,10 @@ export function useRecommendations({
             favoriteCategory
         ) {
             score += 2;
+
+            reasons.push(
+              "Frequently ordered category"
+            );
         }
 
         if (
@@ -115,6 +124,10 @@ export function useRecommendations({
             favoriteCuisine
         ) {
             score += 2;
+
+            reasons.push(
+              "Matches favorite cuisine."
+            );
         }
 
         if (
@@ -122,6 +135,10 @@ export function useRecommendations({
           profile.cuisine
         ) {
           score += 1;
+
+          reasons.push(
+            "Matches favorite cuisine."
+          );
         }
 
         if (
@@ -129,6 +146,10 @@ export function useRecommendations({
           profile.spiceLevel
         ) {
           score += 1;
+
+          reasons.push(
+            "Matches spice preference"
+          );
         }
 
         if (
@@ -136,10 +157,20 @@ export function useRecommendations({
             favoriteSpiceLevel
         ) {
             score += 2;
+
+            reasons.push(
+              "Frequently ordered spice level"
+            );
         }
 
         const frequency =
             foodFrequency[item.name] || 0;
+
+            if (frequency > 0) {
+              reasons.push(
+                `Ordered ${frequency} times before`
+              );
+            }
 
             score += Math.min(
             frequency * 0.5,
@@ -149,6 +180,7 @@ export function useRecommendations({
         return {
           ...item,
           score,
+          reasons,
         };
       })
       .sort(

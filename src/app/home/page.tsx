@@ -14,6 +14,8 @@ import OrderSummaryModal from '@/components/order/order-summary-modal';
 import { useOrders } from "@/hooks/useOrders";
 import ProfileInsights from "@/components/home/profile-insights";
 import { useFavorites } from "@/hooks/useFavorites";
+import HomeFooter from "@/components/layout/home-footer";
+import Footer from "@/components/layout/footer";
 
 export default function Home() {
 
@@ -106,7 +108,7 @@ export default function Home() {
       }
 
 return (
-  <main className="min-h-screen bg-black px-6 pb-20 pt-24 text-white">
+  <main className="min-h-screen bg-black px-6 pb-32 pt-24 text-white">
     <Navbar />
 
     <CartDrawer />
@@ -138,6 +140,7 @@ return (
         items={recommendedFoods}
         favorites={favorites}
         refreshFavorites={refreshFavorites}
+        showReasons={true}
       />
 
       <FoodRow
@@ -167,7 +170,8 @@ return (
         refreshFavorites={refreshFavorites}
       />
     </div>
-
+    <Footer/>
+    <HomeFooter/>
     <FloatingCartButton />
   </main>
 );
