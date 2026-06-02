@@ -5,23 +5,19 @@ import { useUIStore } from "@/store/ui-store";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { ADMIN_EMAIL } from "@/constants/admin";
 
 export default function Navbar() {
   const items = useCartStore(
   (state) => state.items
   );
 
-  const totalItems = items.reduce(
-    (total, item) =>
-      total + item.quantity,
-    0
-  );
-  const toggleCart = useUIStore(
-    (state) => state.toggleCart
-  );
-
   const setUser = useAuthStore(
   (state) => state.setUser
+  );
+
+   const user = useAuthStore(
+    (state) => state.user
   );
 
   const setSelectedProfile =
@@ -57,6 +53,18 @@ export default function Navbar() {
       </h1>
 
       <div className="flex items-center gap-4">
+        {user?.email ===
+          ADMIN_EMAIL && (
+          <button
+            onClick={() =>
+              router.push("/admin")
+            }
+            className="rounded-lg bg-orange-500 px-4 py-2 font-semibold text-black hover:bg-orange-400"
+          >
+            Admin
+          </button>
+        )}
+
         <button
           onClick={() =>
             router.push("/analytics")

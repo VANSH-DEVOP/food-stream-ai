@@ -10,6 +10,11 @@ import {
   where,
 } from "firebase/firestore";
 
+import {
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+
 import { db } from "@/lib/firebase";
 import { Order } from "@/types";
 
@@ -44,4 +49,34 @@ export async function getOrders(
       ...doc.data(),
     })
   ) as Order[];
+}
+
+export async function getAllOrders() {
+  const querySnapshot =
+    await getDocs(
+      collection(db, "orders")
+    );
+
+  return querySnapshot.docs.map(
+    (doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })
+  ) as Order[];
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  status:
+    | "Pending"
+    | "Preparing"
+    | "Out For Delivery"
+    | "Delivered"
+) {
+  await updateDoc(
+    doc(db, "orders", orderId),
+    {
+      status,
+    }
+  );
 }

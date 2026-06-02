@@ -89,6 +89,9 @@ export default function OrderSummaryModal() {
       await placeOrder({
         userId: user.uid,
 
+        userEmail:
+          user.email ?? "",
+
         items,
 
         subtotal,

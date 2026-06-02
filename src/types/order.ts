@@ -6,6 +6,8 @@ export interface Order {
 
   userId: string;
 
+  userEmail: string;
+
   items: CartItem[];
 
   subtotal: number;
