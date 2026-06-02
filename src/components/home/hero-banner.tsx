@@ -14,12 +14,22 @@ export default function HeroBanner() {
           Discover Your Next Meal
         </h1>
 
-        <p className="mt-4 max-w-xl text-zinc-300">
-          Personalized AI-powered food
-          recommendations just for you.
+        <p className="mt-4 max-w-2xl text-xl text-zinc-300">
+          AI recommendations based on your
+          taste profile, favorites, and
+          order history.
         </p>
 
-        <button className="mt-6 rounded-xl bg-orange-500 px-6 py-3 text-lg font-semibold text-black transition hover:bg-orange-400">
+        <button
+          onClick={() => {
+            document
+              .getElementById("recommendations")
+              ?.scrollIntoView({
+                behavior: "smooth",
+              });
+          }}
+          className="mt-6 rounded-xl bg-orange-500 px-8 py-4 text-xl font-bold text-black transition hover:bg-orange-400"
+        >
           Order Now
         </button>
       </div>

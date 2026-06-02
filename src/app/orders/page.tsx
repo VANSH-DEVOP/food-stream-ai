@@ -10,6 +10,7 @@ import { useOrders } from "@/hooks/useOrders";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import OrderSummaryModal from "@/components/order/order-summary-modal";
 import { useProfiles } from "@/hooks/useProfiles";
+import OrderStatusBadge from "@/components/order/order-status-badge";
 
 export default function OrdersPage() {
   const {
@@ -112,11 +113,22 @@ export default function OrdersPage() {
                 className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-2xl font-bold">
-                    Order
-                  </h2>
+                  <div>
+                    <h2 className="text-2xl font-bold">
+                      Order #{order.id?.slice(-6)}
+                    </h2>
 
-                  <span className="text-orange-500">
+                    <div className="mt-2">
+                      <OrderStatusBadge
+                        status={
+                          order.status ??
+                          "Pending"
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <span className="text-2xl font-bold text-orange-500">
                     ₹{order.total}
                   </span>
                 </div>

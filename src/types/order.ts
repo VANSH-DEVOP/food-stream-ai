@@ -14,6 +14,18 @@ export interface Order {
 
   gst: number;
 
+  paymentStatus:
+    | "pending"
+    | "paid";
+
+  paymentId?: string;
+
+  status:
+    | "Pending"
+    | "Preparing"
+    | "Out For Delivery"
+    | "Delivered";
+
   total: number;
 
   createdAt?: Timestamp;

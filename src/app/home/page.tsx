@@ -135,13 +135,15 @@ return (
         />
       )}
 
-      <FoodRow
-        title={`Recommended For ${selectedProfile.name}`}
-        items={recommendedFoods}
-        favorites={favorites}
-        refreshFavorites={refreshFavorites}
-        showReasons={true}
-      />
+      <div id="recommendations">
+        <FoodRow
+          title={`Recommended For ${selectedProfile.name}`}
+          items={recommendedFoods}
+          favorites={favorites}
+          refreshFavorites={refreshFavorites}
+          showReasons={true}
+        />
+      </div>
 
       <FoodRow
         title="Trending Now"

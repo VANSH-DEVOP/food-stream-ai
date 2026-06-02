@@ -4,6 +4,10 @@ import { useOrderStore } from "@/store/order-store";
 import { useCartStore } from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
 import { placeOrder } from "@/services/order-service";
+import {
+  processPayment,
+} from "@/services/payment-service";
+import { useState } from "react";
 
 export default function OrderSummaryModal() {
   const isOpen =
@@ -11,6 +15,9 @@ export default function OrderSummaryModal() {
       (state) =>
         state.isOrderSummaryOpen
     );
+
+  const [isProcessing, setIsProcessing] =
+  useState(false); 
   
   const user = useAuthStore(
     (state) => state.user
@@ -54,11 +61,32 @@ export default function OrderSummaryModal() {
 
 
   async function handleConfirmOrder() {
-    if (!user || items.length === 0) {
-        return;
+    if (
+      !user ||
+      items.length === 0
+    ) {
+      return;
     }
 
-    await placeOrder({
+    try {
+      setIsProcessing(true);
+
+      const paymentResult =
+        await processPayment(
+          total
+        );
+
+      if (
+        !paymentResult.success
+      ) {
+        alert(
+          "Payment failed"
+        );
+
+        return;
+      }
+
+      await placeOrder({
         userId: user.uid,
 
         items,
@@ -70,16 +98,31 @@ export default function OrderSummaryModal() {
         gst,
 
         total,
-    });
 
-    clearCart();
+        paymentStatus:
+          "paid",
 
-    closeOrderSummary();
+        paymentId:
+          paymentResult.paymentId,
 
-    alert(
-        "Order placed successfully!"
-    );
+        status: "Pending",
+      });
+
+      clearCart();
+
+      closeOrderSummary();
+
+      alert(
+        "Payment successful! Order placed."
+      );
+    } catch {
+      alert(
+        "Something went wrong."
+      );
+    } finally {
+      setIsProcessing(false);
     }
+  }
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70">
@@ -176,10 +219,13 @@ export default function OrderSummaryModal() {
         </div>
 
         <button
+        disabled={isProcessing}
           onClick={handleConfirmOrder}
           className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black"
         >
-          Confirm Order
+          {isProcessing
+          ? "Processing Payment..."
+          : `Pay ₹${total}`}
         </button>
       </div>
     </div>
