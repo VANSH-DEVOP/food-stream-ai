@@ -3,7 +3,7 @@
 import Navbar from "@/components/layout/navbar";
 import HeroBanner from "@/components/home/hero-banner";
 import FoodRow from "@/components/home/food-row";
-import { foodItems } from "@/constants/food-data";
+import { useFoods } from "@/hooks/useFoods";
 import CartDrawer from "@/components/layout/cart-drawer";
 import FloatingCartButton from "@/components/layout/floating-cart-button";
 import FilterDrawer from "@/components/layout/filter-drawer";
@@ -49,6 +49,17 @@ export default function Home() {
       user?.uid ?? ""
     );
 
+    const {
+      foods,
+      loading: foodsLoading,
+    } = useFoods();
+
+    const availableFoods =
+    foods.filter(
+      (food) =>
+        food.isAvailable !== false
+    );
+
     const safeProfile =
     selectedProfile ?? {
       id: "",
@@ -72,7 +83,7 @@ export default function Home() {
         );
 
     const favoriteFoods =
-      foodItems.filter(
+      availableFoods.filter(
         (food) =>
           favoriteFoodIds.includes(
             food.id
@@ -82,7 +93,7 @@ export default function Home() {
     const {
         recommendedFoods,
       } = useRecommendations({
-        foods: foodItems,
+        foods: availableFoods,
 
         profile: safeProfile,
 
@@ -97,6 +108,7 @@ export default function Home() {
 
       if (
         isLoading ||
+        foodsLoading ||
         !user ||
         !selectedProfile
       ) {
@@ -123,7 +135,7 @@ return (
       <ProfileInsights
         profile={selectedProfile}
         orders={orders}
-        foods={foodItems}
+        foods={availableFoods}
       />
 
       {favoriteFoods.length > 0 && (
@@ -147,14 +159,14 @@ return (
 
       <FoodRow
         title="Trending Now"
-        items={foodItems}
+        items={availableFoods}
         favorites={favorites}
         refreshFavorites={refreshFavorites}
       />
 
       <FoodRow
         title="Veg Specials"
-        items={foodItems.filter(
+        items={availableFoods.filter(
           (item) =>
             item.category === "Veg"
         )}
@@ -164,7 +176,7 @@ return (
 
       <FoodRow
         title="Non-Veg Specials"
-        items={foodItems.filter(
+        items={availableFoods.filter(
           (item) =>
             item.category === "Non-Veg"
         )}
@@ -172,6 +184,7 @@ return (
         refreshFavorites={refreshFavorites}
       />
     </div>
+    
     <Footer/>
     <HomeFooter/>
     <FloatingCartButton />

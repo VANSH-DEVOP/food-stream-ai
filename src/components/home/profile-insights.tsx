@@ -1,14 +1,6 @@
 "use client";
 
 import {
-  getMostOrderedFoods,
-  getFavoriteCuisine,
-  getFavoriteCategory,
-  getFavoriteSpiceLevel,
-  getTotalOrders,
-} from "@/services/analytics-service";
-
-import {
   FoodItem,
   Order,
   UserProfile,

@@ -14,7 +14,7 @@ import { Favorite } from "@/types";
 export async function addFavorite(
   userId: string,
   profileId: string,
-  foodId: number
+  foodId: string
 ) {
   await addDoc(
     collection(db, "favorites"),

@@ -137,7 +137,7 @@ export function useRecommendations({
           score += 1;
 
           reasons.push(
-            "Matches favorite cuisine."
+            "Matches Preferred cuisine."
           );
         }
 

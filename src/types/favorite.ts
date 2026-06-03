@@ -5,5 +5,5 @@ export interface Favorite {
 
   profileId: string;
 
-  foodId: number;
+  foodId: string;
 }

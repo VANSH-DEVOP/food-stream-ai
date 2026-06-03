@@ -43,13 +43,6 @@ export default function FoodCard({
       (state) => state.user
     );
 
-    // const {
-    //   favorites,
-    //   refreshFavorites,
-    // } = useFavorites(
-    //   user?.uid
-    // );
-
     const existingFavorite =
     favorites.find(
       (favorite) =>
@@ -134,8 +127,11 @@ export default function FoodCard({
           Array.isArray((item as any).reasons) ? (
             (item as any).reasons
               .slice(0, 2)
-              .map((reason: string) => (
-                <div key={reason}>
+              .map((
+                reason: string,
+                index:string
+              ) => (
+                <div key={`${reason}-${index}`}>
                   ✓ {reason}
                 </div>
               ))

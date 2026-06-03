@@ -1,7 +1,9 @@
 export interface FoodItem {
-  id: number;
+  id: string;
 
   name: string;
+
+  description: string;
 
   category: string;
 
@@ -14,4 +16,6 @@ export interface FoodItem {
   price: number;
 
   image: string;
+
+  isAvailable?: boolean;
 }

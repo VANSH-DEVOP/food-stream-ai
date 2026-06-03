@@ -12,17 +12,17 @@ interface CartState {
   ) => void;
 
   removeFromCart: (
-    id: number,
+    id: string,
     profileId: string
   ) => void;
 
   increaseQuantity: (
-    id: number,
+    id: string,
     profileId: string
   ) => void;
 
   decreaseQuantity: (
-    id: number,
+    id: string,
     profileId: string
   ) => void;
 
@@ -74,7 +74,7 @@ export const useCartStore =
         },
 
         removeFromCart: (
-          id : number,
+          id : string,
           profileId: string
         ) => {
           set({
@@ -88,7 +88,7 @@ export const useCartStore =
           });
         },
         increaseQuantity: (
-          id : number,
+          id : string,
           profileId: string
         ) => {
           set({
@@ -107,7 +107,7 @@ export const useCartStore =
         },
 
         decreaseQuantity: (
-          id: number,
+          id: string,
           profileId: string
         ) => {
           set({
