@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email ==
+        "vansh@bansal.com";
+    }
+
+    match /foods/{foodId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /profiles/{profileId} {
+      allow create: if isSignedIn();
+
+      allow read, update, delete:
+        if isAdmin() ||
+        (
+          isSignedIn() &&
+          resource.data.userId ==
+          request.auth.uid
+        );
+    }
+
+    match /favorites/{favoriteId} {
+      allow create: if isSignedIn();
+
+      allow read, update, delete:
+        if isAdmin() ||
+        (
+          isSignedIn() &&
+          resource.data.userId ==
+          request.auth.uid
+        );
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn();
+
+      allow read:
+        if isAdmin() ||
+        (
+          isSignedIn() &&
+          resource.data.userId ==
+          request.auth.uid
+        );
+
+      allow update:
+        if isAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow create: if isSignedIn();
+
+      allow read:
+        if isAdmin() ||
+        (
+          isSignedIn() &&
+          resource.data.userId ==
+          request.auth.uid
+        );
+
+      allow update, delete:
+        if isAdmin();
+    }
+  }
+}

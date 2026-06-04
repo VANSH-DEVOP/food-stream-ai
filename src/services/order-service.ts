@@ -2,15 +2,9 @@ import {
   addDoc,
   collection,
   Timestamp,
-} from "firebase/firestore";
-
-import {
   getDocs,
   query,
   where,
-} from "firebase/firestore";
-
-import {
   doc,
   updateDoc,
 } from "firebase/firestore";
@@ -21,7 +15,7 @@ import { Order } from "@/types";
 export async function placeOrder(
   order: Order
 ) {
-  await addDoc(
+  return await addDoc(
     collection(db, "orders"),
     {
       ...order,

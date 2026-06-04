@@ -5,9 +5,14 @@ import { useCartStore } from "@/store/cart-store";
 import { useAuthStore } from "@/store/auth-store";
 import { placeOrder } from "@/services/order-service";
 import {
-  processPayment,
+  createPaymentOrder,
+  openRazorpayCheckout,
+  verifyPayment
 } from "@/services/payment-service";
 import { useState } from "react";
+import {
+  savePayment,
+} from "@/services/payment-record-service";
 
 export default function OrderSummaryModal() {
   const isOpen =
@@ -71,20 +76,47 @@ export default function OrderSummaryModal() {
     try {
       setIsProcessing(true);
 
+      const razorpayOrder =
+      await createPaymentOrder(
+        total
+      );
+
       const paymentResult =
-        await processPayment(
-          total
+        await openRazorpayCheckout(
+          razorpayOrder
+      );
+
+      const verification =
+        await verifyPayment(
+          paymentResult
         );
 
       if (
-        !paymentResult.success
+        !verification.success
       ) {
-        alert(
-          "Payment failed"
+        throw new Error(
+          "Payment verification failed"
         );
-
-        return;
       }
+
+      await savePayment({
+        paymentId:
+          paymentResult.razorpay_payment_id,
+
+        razorpayOrderId:
+          paymentResult.razorpay_order_id,
+
+        amount: total,
+
+        userId:
+          user.uid,
+
+        userEmail:
+          user.email ?? "",
+
+        status:
+          "success",
+      });
 
       await placeOrder({
         userId: user.uid,
@@ -106,7 +138,7 @@ export default function OrderSummaryModal() {
           "paid",
 
         paymentId:
-          paymentResult.paymentId,
+          paymentResult.razorpay_payment_id,
 
         status: "Pending",
       });
@@ -118,9 +150,17 @@ export default function OrderSummaryModal() {
       alert(
         "Payment successful! Order placed."
       );
-    } catch {
+    } catch (error) {
+
+      console.error(
+        "Payment Error:",
+        error
+      );
+
       alert(
-        "Something went wrong."
+        error instanceof Error
+          ? error.message
+          : "Something went wrong"
       );
     } finally {
       setIsProcessing(false);
