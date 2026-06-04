@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
-import { Order } from "@/types";
+import { Order,OrderStatus } from "@/types";
 
 export async function placeOrder(
   order: Order
@@ -61,11 +61,7 @@ export async function getAllOrders() {
 
 export async function updateOrderStatus(
   orderId: string,
-  status:
-    | "Pending"
-    | "Preparing"
-    | "Out For Delivery"
-    | "Delivered"
+  status: OrderStatus
 ) {
   await updateDoc(
     doc(db, "orders", orderId),

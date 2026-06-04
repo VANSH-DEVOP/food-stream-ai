@@ -2,8 +2,6 @@
 
 import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
-import { placeOrder } from "@/services/order-service";
-import { useAuthStore } from "@/store/auth-store";
 import { useOrderStore } from "@/store/order-store";
 
 export default function CartDrawer() {
@@ -31,20 +29,6 @@ export default function CartDrawer() {
     useCartStore(
         (state) =>
         state.decreaseQuantity
-    );
-
-    const user = useAuthStore(
-    (state) => state.user
-    );
-
-    const selectedProfile =
-    useAuthStore(
-        (state) =>
-        state.selectedProfile
-    );
-
-    const clearCart = useCartStore(
-    (state) => state.clearCart
     );
 
     const closeCart = useUIStore(

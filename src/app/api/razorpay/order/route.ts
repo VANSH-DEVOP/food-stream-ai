@@ -14,10 +14,6 @@ export async function POST(
     } =
       await request.json();
 
-    console.log(
-    "Razorpay initialized"
-    );
-
     const order =
       await razorpay.orders.create({
         amount:

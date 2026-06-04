@@ -18,4 +18,6 @@ export interface FoodItem {
   image: string;
 
   isAvailable?: boolean;
+
+  reasons?: string[];
 }

@@ -1,6 +1,10 @@
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (
+      options: unknown
+    ) => {
+      open(): void;
+    };
   }
 }
 

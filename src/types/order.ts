@@ -22,13 +22,15 @@ export interface Order {
 
   paymentId?: string;
 
-  status:
-    | "Pending"
-    | "Preparing"
-    | "Out For Delivery"
-    | "Delivered";
+  status: OrderStatus;
 
   total: number;
 
   createdAt?: Timestamp;
 }
+
+export type OrderStatus =
+  | "Pending"
+  | "Preparing"
+  | "Out For Delivery"
+  | "Delivered";

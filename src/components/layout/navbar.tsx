@@ -8,10 +8,6 @@ import { useRouter } from "next/navigation";
 import { ADMIN_EMAIL } from "@/constants/admin";
 
 export default function Navbar() {
-  const items = useCartStore(
-  (state) => state.items
-  );
-
   const setUser = useAuthStore(
   (state) => state.setUser
   );

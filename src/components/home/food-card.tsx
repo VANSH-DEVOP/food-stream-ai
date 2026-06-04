@@ -64,12 +64,6 @@ export default function FoodCard({
           existingFavorite.id
         );
       } else {
-        console.log(
-          "Adding favorite",
-          user.uid,
-          selectedProfile.id,
-          item.id
-        );
         await addFavorite(
           user.uid,
           selectedProfile.id,
@@ -124,12 +118,12 @@ export default function FoodCard({
 
         <div className="mt-3 h-[70px] text-sm text-zinc-400">
           {showReasons &&
-          Array.isArray((item as any).reasons) ? (
-            (item as any).reasons
+          Array.isArray(item.reasons) ? (
+            item.reasons
               .slice(0, 2)
               .map((
                 reason: string,
-                index:string
+                index:number
               ) => (
                 <div key={`${reason}-${index}`}>
                   ✓ {reason}

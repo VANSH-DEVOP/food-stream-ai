@@ -19,7 +19,7 @@ import { useAdminFoods } from "@/hooks/useAdminFoods";
 import { updateFood,deleteFood } from "@/services/food-service";
 import EditFoodModal
 from "@/components/admin/edit-food-modal";
-import { FoodItem }
+import { FoodItem,OrderStatus }
 from "@/types";
 
 export default function AdminPage() {
@@ -388,12 +388,6 @@ export default function AdminPage() {
                         <button
                         onClick={async () => {
 
-                            console.log(
-                                "Food ID:",
-                                food.id,
-                                typeof food.id
-                            );
-
                             await updateFood(
                             food.id,
                             {
@@ -502,7 +496,7 @@ export default function AdminPage() {
 
                         await updateOrderStatus(
                             order.id!,
-                            e.target.value as any
+                            e.target.value as OrderStatus
                         );
 
                         await refreshOrders();

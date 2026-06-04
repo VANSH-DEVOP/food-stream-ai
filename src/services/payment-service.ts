@@ -1,9 +1,14 @@
-import Razorpay from "razorpay";
 
 interface RazorpayPaymentResponse {
   razorpay_payment_id: string;
   razorpay_order_id: string;
   razorpay_signature: string;
+}
+
+interface RazorpayOrder {
+  id: string;
+  amount: number;
+  currency: string;
 }
 
 export async function createPaymentOrder(
@@ -27,16 +32,11 @@ export async function createPaymentOrder(
   const data =
     await response.json();
 
-  console.log(
-    "Razorpay Order Response:",
-    data
-  );
-
   return data;
 }
 
 export async function openRazorpayCheckout(
-  order: any
+  order: RazorpayOrder
 ):Promise<RazorpayPaymentResponse> {
   return new Promise<RazorpayPaymentResponse>(
     (resolve, reject) => {
@@ -74,11 +74,6 @@ export async function openRazorpayCheckout(
         handler: function (
           response: RazorpayPaymentResponse
         ) {
-          console.log(
-            "PAYMENT SUCCESS",
-            response
-          );
-
           resolve(response);
         },
 
