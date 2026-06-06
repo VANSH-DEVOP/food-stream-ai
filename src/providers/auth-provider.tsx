@@ -8,6 +8,8 @@ import { auth } from "@/lib/firebase";
 
 import { useAuthStore } from "@/store/auth-store";
 
+import { getUser } from "@/services/user-service";
+
 export default function AuthProvider({
   children,
 }: {
@@ -22,25 +24,48 @@ export default function AuthProvider({
   );
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
+
+  const unsubscribe =
+    onAuthStateChanged(
       auth,
-      (user) => {
+      async (user) => {
+
         if (user) {
+
+          const userData =
+            await getUser(
+              user.uid
+            );
+
           setUser({
             uid: user.uid,
-            phoneNumber: user.phoneNumber,
-            email: user.email,
+
+            phoneNumber:
+              user.phoneNumber,
+
+            email:
+              user.email,
+
+            role:
+              userData?.role ??
+              "user",
           });
+
         } else {
+
           setUser(null);
+
         }
 
         setLoading(false);
+
       }
     );
 
-    return () => unsubscribe();
-  }, [setUser, setLoading]);
+  return () =>
+    unsubscribe();
+
+}, [setUser, setLoading]);
 
   return <>{children}</>;
 }

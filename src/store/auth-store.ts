@@ -7,6 +7,7 @@ interface AuthState {
     uid: string;
     phoneNumber: string | null;
     email?: string | null;
+    role?: "admin" | "user";
   } | null;
 
   profiles: UserProfile[];
@@ -20,7 +21,8 @@ interface AuthState {
       uid: string;
       phoneNumber: string | null;
       email?: string | null;
-    } | null
+      role?: "admin" | "user";
+    } | null,
   ) => void;
 
   setProfiles: (profiles: UserProfile[]) => void;

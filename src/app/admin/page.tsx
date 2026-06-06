@@ -13,7 +13,6 @@ import {
   getTopCustomers,
   getRecentOrders
 } from "@/services/admin-analytics-service";
-import { ADMIN_EMAIL } from "@/constants/admin";
 import { updateOrderStatus } from "@/services/order-service";
 import { useAdminFoods } from "@/hooks/useAdminFoods";
 import { updateFood,deleteFood } from "@/services/food-service";
@@ -116,10 +115,15 @@ export default function AdminPage() {
     );
   }
 
-    if (
-    !user ||
-    user.email !== ADMIN_EMAIL
-    ) {
+    if (!user) {
+    return (
+        <main className="flex min-h-screen items-center justify-center bg-black text-white">
+        Please Login
+        </main>
+    );
+    }
+
+    if (user.role !== "admin") {
     return (
         <main className="flex min-h-screen items-center justify-center bg-black text-white">
         Access Denied

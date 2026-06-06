@@ -49,8 +49,8 @@ export default function Navbar() {
       </h1>
 
       <div className="flex items-center gap-4">
-        {user?.email ===
-          ADMIN_EMAIL && (
+        {user?.role ===
+          "admin" && (
           <button
             onClick={() =>
               router.push("/admin")

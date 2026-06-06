@@ -8,9 +8,10 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return request.auth != null &&
-        request.auth.token.email ==
-        "vansh@bansal.com";
+    return request.auth != null &&
+      get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.role == "admin";
     }
 
     match /foods/{foodId} {
@@ -70,6 +71,23 @@ service cloud.firestore {
 
       allow update, delete:
         if isAdmin();
+    }
+
+    match /users/{userId} {a
+      allow create:
+        if request.auth != null &&
+        request.auth.uid == userId;
+
+      allow read:
+        if request.auth != null &&
+        request.auth.uid == userId;
+
+      allow update:
+        if request.auth != null &&
+        request.auth.uid == userId;
+
+      allow delete:
+        if false;
     }
   }
 }
