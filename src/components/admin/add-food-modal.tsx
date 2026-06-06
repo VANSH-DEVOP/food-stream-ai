@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { addFood,foodExists } from "@/services/food-service";
+import { toast } from "sonner";
 
 interface AddFoodModalProps {
   isOpen: boolean;
@@ -53,7 +54,6 @@ export default function AddFoodModal({
     !name.trim() ||
     !description.trim() ||
     !image.trim() ||
-    Number(price) <= 0 ||
     !tags.trim()
   ) {
     setError(
@@ -67,10 +67,30 @@ export default function AddFoodModal({
     await foodExists(name);
 
   if (exists) {
-    alert(
+    toast.error(
       "Food already exists"
     );
 
+    return;
+  }
+
+  if (!Number.isFinite(Number(price))) {
+    toast.error("Price must be a valid number");
+    return;
+  }
+
+  if (!name.trim()) {
+    toast.error("Food name is required");
+    return;
+  }
+
+  if (!description.trim()) {
+    toast.error("Description is required");
+    return;
+  }
+
+  if (!image.trim()) {
+    toast.error("Image URL is required");
     return;
   }
 
@@ -92,7 +112,7 @@ export default function AddFoodModal({
   });
 
   await refreshFoods();
-
+  toast.success("Food Added Sucessfully.")
   setName("");
   setDescription("");
   setPrice("");

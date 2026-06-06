@@ -6,6 +6,7 @@ import {
   foodExistsExceptCurrent
 } from "@/services/food-service";
 import { FoodItem } from "@/types";
+import { toast } from "sonner";
 
 interface EditFoodModalProps {
   food: FoodItem | null;
@@ -155,6 +156,9 @@ export default function EditFoodModal({
 );
 
   await refreshFoods();
+  toast.success(
+    "Food Updated Sucessfully."
+  );
 
   setName("");
   setDescription("");

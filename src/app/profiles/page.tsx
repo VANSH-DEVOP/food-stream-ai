@@ -12,6 +12,7 @@ import {
   createProfile,
   deleteProfile,
 } from "@/services/profile-service";
+import { toast } from "sonner";
 
 export default function ProfilesPage() {
   const router = useRouter();
@@ -217,7 +218,7 @@ export default function ProfilesPage() {
               catch (error){
                 console.error(error);
 
-                alert(
+                toast.error(
                   "Failed to delete profile."
                 );
               }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AddFoodModal from "@/components/admin/add-food-modal";
 import Navbar from "@/components/layout/navbar";
 import { useAuthStore } from "@/store/auth-store";
@@ -20,8 +20,12 @@ import EditFoodModal
 from "@/components/admin/edit-food-modal";
 import { FoodItem,OrderStatus }
 from "@/types";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
+
+  const router = useRouter();
 
   const user = useAuthStore(
     (state) => state.user
@@ -46,6 +50,10 @@ export default function AdminPage() {
     refreshFoods,
     
   } = useAdminFoods();
+
+  const isLoading = useAuthStore(
+    (state) => state.isLoading
+    );
 
   const [showAddModal,
     setShowAddModal] =
@@ -107,7 +115,20 @@ export default function AdminPage() {
     foods.length -
     availableFoods;
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading) {
+        if (!user) {
+        router.push("/login");
+        return;
+        }
+
+        if (user.role !== "admin") {
+        router.push("/home");
+        }
+    }
+    }, [user, loading, router]);
+
+  if (isLoading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black text-white">
         Loading...
@@ -115,20 +136,8 @@ export default function AdminPage() {
     );
   }
 
-    if (!user) {
-    return (
-        <main className="flex min-h-screen items-center justify-center bg-black text-white">
-        Please Login
-        </main>
-    );
-    }
-
-    if (user.role !== "admin") {
-    return (
-        <main className="flex min-h-screen items-center justify-center bg-black text-white">
-        Access Denied
-        </main>
-    );
+   if (!user || user.role !== "admin") {
+       return null;
     }
 
   return (
@@ -175,6 +184,7 @@ export default function AdminPage() {
                     );
 
                     await refreshFoods();
+                    toast.success("Food item deleted.");
 
                     setFoodToDelete(
                         null

@@ -5,7 +5,6 @@ import { useUIStore } from "@/store/ui-store";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { ADMIN_EMAIL } from "@/constants/admin";
 
 export default function Navbar() {
   const setUser = useAuthStore(

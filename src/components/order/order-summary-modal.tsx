@@ -13,6 +13,7 @@ import { useState } from "react";
 import {
   savePayment,
 } from "@/services/payment-record-service";
+import { toast } from "sonner";
 
 export default function OrderSummaryModal() {
   const isOpen =
@@ -147,7 +148,7 @@ export default function OrderSummaryModal() {
 
       closeOrderSummary();
 
-      alert(
+      toast.success(
         "Payment successful! Order placed."
       );
     } catch (error) {
@@ -157,7 +158,7 @@ export default function OrderSummaryModal() {
         error
       );
 
-      alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : "Something went wrong"

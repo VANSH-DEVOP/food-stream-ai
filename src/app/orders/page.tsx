@@ -11,6 +11,7 @@ import { useAuthGuard } from "@/hooks/useAuthGuard";
 import OrderSummaryModal from "@/components/order/order-summary-modal";
 import { useProfiles } from "@/hooks/useProfiles";
 import OrderStatusBadge from "@/components/order/order-status-badge";
+import {toast} from "sonner";
 
 export default function OrdersPage() {
   const {
@@ -244,7 +245,7 @@ export default function OrdersPage() {
                     if (
                       validItems.length === 0
                     ) {
-                      alert(
+                      toast.warning(
                         "All profiles from this order have been deleted."
                       );
 
@@ -255,7 +256,7 @@ export default function OrdersPage() {
                       validItems.length <
                       order.items.length
                     ) {
-                      alert(
+                      toast.warning(
                         `${
                           order.items.length -
                           validItems.length

@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from "@/providers/auth-provider";
 import Script
 from "next/script";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,11 @@ export default function RootLayout({
         <AuthProvider>
           {children}
         </AuthProvider>
+
+        <Toaster
+          position="top-center"
+          richColors
+        />
 
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
