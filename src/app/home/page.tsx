@@ -16,6 +16,13 @@ import ProfileInsights from "@/components/home/profile-insights";
 import { useFavorites } from "@/hooks/useFavorites";
 import HomeFooter from "@/components/layout/home-footer";
 import Footer from "@/components/layout/footer";
+import { useState } from "react";
+
+import AIChatButton
+from "@/components/chat/ai-chat-button";
+
+import AIChatModal
+from "@/components/chat/ai-chat-modal";
 
 export default function Home() {
 
@@ -32,6 +39,11 @@ export default function Home() {
     const cuisine = useFilterStore(
       (state) => state.cuisine
     );
+
+    const [
+      isChatOpen,
+      setIsChatOpen,
+    ] = useState(false);
 
     const spiceLevel =
       useFilterStore(
@@ -139,15 +151,26 @@ return (
       />
 
       {favoriteFoods.length > 0 && (
-        <FoodRow
-          title={`❤️ ${selectedProfile.name}'s Favorites`}
-          items={favoriteFoods}
-          favorites={favorites}
-          refreshFavorites={refreshFavorites}
-        />
-      )}
+          <FoodRow
+            title={`❤️ ${selectedProfile.name}'s Favorites`}
+            items={favoriteFoods}
+            favorites={favorites}
+            refreshFavorites={refreshFavorites}
+          />
+        )}
 
       <div id="recommendations">
+
+        <div className="mb-4 rounded-lg border border-orange-500/20 bg-orange-500/5 px-4 py-3">
+          <p className="font-medium text-orange-400">
+            🤖 Personalized Recommendations
+          </p>
+
+          <p className="text-sm text-zinc-400">
+            Based on order history, favorite cuisine, category, and spice preferences.
+          </p>
+        </div>
+
         <FoodRow
           title={`Recommended For ${selectedProfile.name}`}
           items={recommendedFoods}
@@ -155,6 +178,7 @@ return (
           refreshFavorites={refreshFavorites}
           showReasons={true}
         />
+
       </div>
 
       <FoodRow
@@ -187,6 +211,20 @@ return (
     
     <Footer/>
     <HomeFooter/>
+    <AIChatModal
+      isOpen={isChatOpen}
+      onClose={() =>
+        setIsChatOpen(false)
+      }
+      foods={availableFoods}
+      profile={selectedProfile}
+    />
+
+    <AIChatButton
+      onClick={() =>
+        setIsChatOpen(true)
+      }
+    />
     <FloatingCartButton />
   </main>
 );
