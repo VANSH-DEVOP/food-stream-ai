@@ -1,10 +1,52 @@
 import crypto from "crypto";
-import { NextResponse } from "next/server";
+import { NextRequest,NextResponse } from "next/server";
+import { verifyAuth } from "@/lib/verify-auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(
-  request: Request
+  request: NextRequest
 ) {
   try {
+    const user =
+      await verifyAuth(
+        request
+      );
+
+    if (!user) {
+
+      return NextResponse.json(
+        {
+          error:
+            "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+
+    }
+
+    const allowed =
+          rateLimit(
+            user.uid,
+            10,
+            60_000
+          );
+    
+        if (!allowed) {
+    
+          return NextResponse.json(
+            {
+              response:
+                "Too many requests. Please wait a minute.",
+            },
+            {
+              status: 429,
+            }
+          );
+    
+        }
+
     const {
       razorpay_order_id,
       razorpay_payment_id,

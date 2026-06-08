@@ -1,3 +1,5 @@
+import {auth} from "@/lib/firebase";
+
 
 interface RazorpayPaymentResponse {
   razorpay_payment_id: string;
@@ -14,15 +16,24 @@ interface RazorpayOrder {
 export async function createPaymentOrder(
   amount: number
 ) {
+  const token =
+    await auth.currentUser
+      ?.getIdToken();
+
   const response =
     await fetch(
       "/api/razorpay/order",
       {
         method: "POST",
+
         headers: {
           "Content-Type":
             "application/json",
+
+          Authorization:
+            `Bearer ${token}`,
         },
+
         body: JSON.stringify({
           amount,
         }),
@@ -105,15 +116,24 @@ export async function verifyPayment(
     razorpay_signature: string;
   }
 ) {
+  const token =
+    await auth.currentUser
+      ?.getIdToken();
+
   const response =
     await fetch(
       "/api/razorpay/verify",
       {
         method: "POST",
+
         headers: {
           "Content-Type":
             "application/json",
+
+          Authorization:
+            `Bearer ${token}`,
         },
+
         body: JSON.stringify(
           payment
         ),

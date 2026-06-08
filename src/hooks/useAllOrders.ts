@@ -1,31 +1,47 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  subscribeToAllOrders,
+} from "@/services/order-service";
 
 import { Order } from "@/types";
-import { getAllOrders } from "@/services/order-service";
 
 export function useAllOrders() {
-  const [orders, setOrders] =
-    useState<Order[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    orders,
+    setOrders,
+  ] = useState<Order[]>([]);
 
-  async function refreshOrders() {
-    const data =
-      await getAllOrders();
-
-    setOrders(data);
-
-    setLoading(false);
-  }
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
   useEffect(() => {
-    refreshOrders();
+
+    const unsubscribe =
+      subscribeToAllOrders(
+        (orders) => {
+
+          setOrders(
+            orders
+          );
+
+          setLoading(false);
+
+        }
+      );
+
+    return unsubscribe;
+
   }, []);
 
   return {
     orders,
     loading,
-    refreshOrders,
   };
 }

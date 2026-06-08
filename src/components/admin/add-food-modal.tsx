@@ -7,13 +7,11 @@ import { toast } from "sonner";
 interface AddFoodModalProps {
   isOpen: boolean;
   onClose: () => void;
-  refreshFoods: () => Promise<void>;
 }
 
 export default function AddFoodModal({
   isOpen,
   onClose,
-  refreshFoods,
 }: AddFoodModalProps) {
 
   const [name, setName] =
@@ -111,7 +109,6 @@ export default function AddFoodModal({
     isAvailable,
   });
 
-  await refreshFoods();
   toast.success("Food Added Sucessfully.")
   setName("");
   setDescription("");

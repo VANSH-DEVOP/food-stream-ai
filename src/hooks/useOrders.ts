@@ -1,31 +1,47 @@
 import { useEffect, useState } from "react";
 
-import { getOrders } from "@/services/order-service";
+import {
+  subscribeToOrders,
+} from "@/services/order-service";
 
 import { Order } from "@/types";
 
 export function useOrders(
   userId?: string
 ) {
-  const [orders, setOrders] =
-    useState<Order[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    orders,
+    setOrders,
+  ] = useState<Order[]>([]);
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
   useEffect(() => {
-    async function loadOrders() {
-      if (!userId) return;
 
-      const data =
-        await getOrders(userId);
-
-      setOrders(data);
-
-      setLoading(false);
+    if (!userId) {
+      return;
     }
 
-    loadOrders();
+    const unsubscribe =
+      subscribeToOrders(
+        userId,
+        (orders) => {
+
+          setOrders(
+            orders
+          );
+
+          setLoading(false);
+
+        }
+      );
+
+    return unsubscribe;
+
   }, [userId]);
 
   return {

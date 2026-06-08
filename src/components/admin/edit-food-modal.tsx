@@ -15,14 +15,12 @@ interface EditFoodModalProps {
 
   onClose: () => void;
 
-  refreshFoods: () => Promise<void>;
 }
 
 export default function EditFoodModal({
   food,
   isOpen,
   onClose,
-  refreshFoods,
 }: EditFoodModalProps) {
 
   const [name, setName] =
@@ -155,7 +153,6 @@ export default function EditFoodModal({
   }
 );
 
-  await refreshFoods();
   toast.success(
     "Food Updated Sucessfully."
   );

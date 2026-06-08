@@ -41,6 +41,11 @@ export default function AIChatModal({
     setLoading,
   ] = useState(false);
 
+  const [
+    action,
+    setAction,
+  ] = useState(null);
+
   if (!isOpen) {
     return null;
   }
@@ -62,7 +67,14 @@ export default function AIChatModal({
           profile
         );
 
-      setResponse(answer);
+        console.log(
+          "CHATBOT RESULT:",
+          answer
+        );
+      setResponse(answer.response);
+      setAction(
+        answer.action
+      );
 
     } finally {
 

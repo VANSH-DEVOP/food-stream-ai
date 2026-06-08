@@ -2,12 +2,17 @@ import {
   FoodItem,
   UserProfile,
 } from "@/types";
+import {auth} from "@/lib/firebase"
 
 export async function askAI(
   question: string,
   foods: FoodItem[],
   profile: UserProfile
 ) {
+
+  const token =
+    await auth.currentUser
+      ?.getIdToken();
 
   const response =
     await fetch(
@@ -18,6 +23,9 @@ export async function askAI(
         headers: {
           "Content-Type":
             "application/json",
+
+          Authorization:
+            `Bearer ${token}`,
         },
 
         body:
@@ -32,5 +40,5 @@ export async function askAI(
   const data =
     await response.json();
 
-  return data.response;
+  return data;
 }

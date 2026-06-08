@@ -1,7 +1,13 @@
+import {auth} from "@/lib/firebase";
+
 export async function getAIExplanation(
   foodName: string,
   reasons: string[]
 ) {
+
+  const token =
+    await auth.currentUser
+      ?.getIdToken();
 
   const response =
     await fetch(
@@ -12,6 +18,9 @@ export async function getAIExplanation(
         headers: {
           "Content-Type":
             "application/json",
+
+          Authorization:
+            `Bearer ${token}`,
         },
 
         body:
@@ -34,6 +43,9 @@ export async function getAIInsight(
     reasons?: string[];
   }[]
 ) {
+  const token =
+    await auth.currentUser
+      ?.getIdToken();
 
   const response =
     await fetch(
@@ -44,6 +56,9 @@ export async function getAIInsight(
         headers: {
           "Content-Type":
             "application/json",
+
+          Authorization:
+            `Bearer ${token}`,
         },
 
         body:

@@ -7,6 +7,8 @@ import {
   where,
   doc,
   updateDoc,
+  onSnapshot,
+  QuerySnapshot
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -67,6 +69,58 @@ export async function updateOrderStatus(
     doc(db, "orders", orderId),
     {
       status,
+    }
+  );
+}
+
+export function subscribeToOrders(
+  userId: string,
+  callback: (orders: Order[]) => void
+) {
+
+  const q = query(
+    collection(db, "orders"),
+    where("userId", "==", userId)
+  );
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+
+      const orders =
+        snapshot.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })
+        ) as Order[];
+
+      callback(orders);
+
+    }
+  );
+}
+
+export function subscribeToAllOrders(
+  callback: (
+    orders: Order[]
+  ) => void
+) {
+
+  return onSnapshot(
+    collection(db, "orders"),
+    (snapshot) => {
+
+      const orders =
+        snapshot.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })
+        ) as Order[];
+
+      callback(orders);
+
     }
   );
 }

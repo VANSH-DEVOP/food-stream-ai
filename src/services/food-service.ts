@@ -7,7 +7,8 @@ import {
   Timestamp,
   updateDoc,
   query,
-  where
+  where,
+  onSnapshot
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -103,5 +104,31 @@ foodExistsExceptCurrent(
     (doc) =>
       doc.id !==
       currentFoodId
+  );
+}
+
+export function subscribeToFoods(
+  callback: (
+    foods: FoodItem[]
+  ) => void
+) {
+
+  return onSnapshot(
+    collection(db, "foods"),
+    (snapshot) => {
+
+      const foods =
+        snapshot.docs.map(
+          (doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          })
+        ) as FoodItem[];
+
+      callback(
+        foods
+      );
+
+    }
   );
 }

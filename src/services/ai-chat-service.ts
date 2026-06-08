@@ -1,88 +1,203 @@
 import { ai } from "@/lib/gemini";
+
 import {
   FoodItem,
   UserProfile,
 } from "@/types";
 
+import {
+  AIChatResult,
+} from "@/types/ai";
+
 export async function generateChatResponse(
   question: string,
   foods: FoodItem[],
   profile: UserProfile
-) {
+): Promise<AIChatResult> {
 
   const menu =
     foods
-      .slice(0, 50)
+      .slice(0, 15)
       .map(
         (food) =>
-          `
-Name: ${food.name}
-Price: ₹${food.price}
-Category: ${food.category}
-Cuisine: ${food.cuisine}
-Spice: ${food.spiceLevel}
-Description: ${food.description}
-`
+          `${food.name} | ₹${food.price} | ${food.category} | ${food.cuisine} | ${food.spiceLevel}`
       )
       .join("\n");
 
   const prompt = `
 You are FoodStream AI.
-
-Selected Profile:
-
+User Profile:
 Name: ${profile.name}
+Cuisine: ${profile.cuisine}
+Spice Level: ${profile.spiceLevel}
 Favorite Category: ${profile.favoriteCategory}
-Preferred Cuisine: ${profile.cuisine}
-Preferred Spice Level: ${profile.spiceLevel}
-
 Menu:
-
 ${menu}
-
-User Question:
-
+User:
 ${question}
-
+Determine the user's intent.
+Supported intents:
+1. recommend_food
+2. add_to_cart
+3. surprise_me
+Return ONLY JSON.
+Examples:
+{
+  "intent":"recommend_food",
+  "response":"Based on your preference for Indian vegetarian food and medium spice levels, I'd recommend Paneer Butter Masala (₹289). It matches your favorite cuisine and category while offering a rich and satisfying dinner option."
+}
+{
+  "intent":"add_to_cart",
+  "foodName":"Paneer Butter Masala",
+  "quantity":1,
+  "response":"I found Paneer Butter Masala for you."
+}
+{
+  "intent":"surprise_me",
+  "response":"Let's surprise you today."
+}
 Rules:
-- Recommend only foods from the menu.
-- Mention prices when relevant.
-- Keep responses under 120 words.
-- Do not use markdown.
-- Do not use: * ** # -
-- Use plain readable text only.
-- Be concise and friendly.
-- Use numbered recommendations.
-Example:
-1. Paneer Butter Masala (₹289)
-2. Palak Paneer (₹259)
-Then explain briefly.
+- Recommendation responses should be 3-4 sentences.
+- Mention why the food fits the user's profile.
+- Mention price when relevant.
+- Keep under 80 words.
+- Make the response a little representable
 `;
 
   try {
 
-  const response =
-    await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    const response =
+      await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+      });
 
-  return (
-    response.text ??
-    "I couldn't generate a recommendation."
-  );
+    const text =
+      response.text ?? "";
 
-} catch (error) {
+    const cleanedText =
+    text
+      .replace(
+        /```json/g,
+        ""
+      )
+      .replace(
+        /```/g,
+        ""
+      )
+      .trim();
 
-  console.error(error);
+    let result;
 
-  return `
+    try {
+
+      result =
+        JSON.parse(cleanedText);
+
+    } catch {
+
+      return {
+        response: text,
+        action: null,
+      };
+
+    }
+
+    if (
+      result.intent ===
+      "add_to_cart"
+    ) {
+
+      const normalized =
+      result.foodName
+        .toLowerCase()
+        .trim();
+
+      const matchedFood =
+      foods.find(
+        food =>
+          food.name
+            .toLowerCase()
+            .trim() ===
+          normalized
+      );
+
+      return {
+        response:
+          result.response ??
+          "I found a food for you.",
+
+        action:
+          matchedFood
+            ? {
+                type:
+                  "add_to_cart",
+
+                foodId:
+                  matchedFood.id,
+
+                quantity:
+                  result.quantity ?? 1,
+              }
+            : null,
+      };
+    }
+
+    if (
+      result.intent ===
+      "surprise_me"
+    ) {
+
+      const candidateFoods =
+      foods.filter(
+        food =>
+          food.category ===
+          profile.favoriteCategory
+      );
+
+      const randomFood =
+        candidateFoods[
+          Math.floor(
+            Math.random() *
+            foods.length
+          )
+        ];
+
+      return {
+        response:
+          `Today's surprise pick is ${randomFood.name}.`,
+
+        action: {
+          type:
+            "add_to_cart",
+
+          foodId:
+            randomFood.id,
+
+          quantity: 1,
+        },
+      };
+    }
+
+    return {
+      response:
+        result.response ??
+        "I found some recommendations for you.",
+      action: null,
+    };
+
+  } catch (error) {
+
+    console.error(error);
+
+    return {
+      response: `
 I'm currently experiencing high demand.
 
-Try asking again in a few moments.
+Please try again shortly.
+      `,
+      action: null,
+    };
 
-Meanwhile, for ${profile.name}, I'd recommend exploring ${profile.cuisine} ${profile.favoriteCategory} dishes that match the preferred ${profile.spiceLevel} spice level.
-`;
-
-}
+  }
 }

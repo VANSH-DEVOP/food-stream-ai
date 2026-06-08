@@ -8,34 +8,44 @@ import {
 import { FoodItem } from "@/types";
 
 import {
-  getFoods,
+  subscribeToFoods,
 } from "@/services/food-service";
 
 export function useFoods() {
-  const [foods, setFoods] =
-    useState<
-      FoodItem[]
-    >([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    foods,
+    setFoods,
+  ] = useState<FoodItem[]>(
+    []
+  );
 
-  async function refreshFoods() {
-    const data =
-      await getFoods();
-
-    setFoods(data);
-
-    setLoading(false);
-  }
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
   useEffect(() => {
-    refreshFoods();
+
+    const unsubscribe =
+      subscribeToFoods(
+        (foods) => {
+
+          setFoods(
+            foods
+          );
+
+          setLoading(false);
+
+        }
+      );
+
+    return unsubscribe;
+
   }, []);
 
   return {
     foods,
     loading,
-    refreshFoods,
   };
 }
