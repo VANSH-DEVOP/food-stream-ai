@@ -19,6 +19,11 @@ import FoodManagement from "@/components/admin/FoodManagement";
 import OrderManagement from "@/components/admin/order-management";
 import DashboardStats from "@/components/admin/DashboardStats";
 import DeleteFoodModal from "@/components/admin/delete-food-modal";
+import AdminManagement
+from "@/components/admin/admin-management";
+
+import { useUsers }
+from "@/hooks/useUsers";
 
 export default function AdminPage() {
 
@@ -64,6 +69,16 @@ export default function AdminPage() {
   getRecentOrders(
     orders
   );
+
+  const {
+    users,
+    refreshUsers,
+  } = useUsers();
+
+  const isSuperAdmin =
+  user?.uid ===
+  process.env
+    .NEXT_PUBLIC_SUPER_ADMIN_UID;
 
   useEffect(() => {
     if (!loading) {
@@ -158,6 +173,19 @@ export default function AdminPage() {
                 setShowAddModal(false)
             }
         />
+
+        {
+          isSuperAdmin && (
+            <AdminManagement
+              users={users}
+              refreshUsers={refreshUsers}
+              superAdminUid={
+                process.env
+                  .NEXT_PUBLIC_SUPER_ADMIN_UID!
+              }
+            />
+          )
+        }
 
     </main>
   );

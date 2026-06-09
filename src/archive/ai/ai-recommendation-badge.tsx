@@ -2,7 +2,7 @@
 
 import {
   useAIExplanation,
-} from "@/hooks/useAIExplanation";
+} from "@/archive/ai/useAIExplanation";
 
 interface Props {
   foodName: string;

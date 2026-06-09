@@ -10,7 +10,9 @@ import {
   where,
   onSnapshot
 } from "firebase/firestore";
-
+import {
+  normalizeFoodName
+} from "@/utils/food";
 import { db } from "@/lib/firebase";
 import { FoodItem } from "@/types";
 
@@ -39,6 +41,11 @@ export async function addFood(
     {
         ...food,
 
+        searchName: 
+          normalizeFoodName(
+          food.name
+        ),
+
         isAvailable: true,
 
         createdAt:
@@ -53,7 +60,16 @@ export async function updateFood(
 ) {
   await updateDoc(
     doc(db, "foods", id),
-    food
+    {
+      ...food,
+
+      ...(food.name && {
+        searchName:
+          normalizeFoodName(
+            food.name
+          ),
+      }),
+    }
   );
 }
 
@@ -71,9 +87,9 @@ export async function foodExists(
   const q = query(
     collection(db, "foods"),
     where(
-      "name",
+      "searchName",
       "==",
-      name
+      normalizeFoodName(name)
     )
   );
 
@@ -91,9 +107,9 @@ foodExistsExceptCurrent(
   const q = query(
     collection(db, "foods"),
     where(
-      "name",
+      "searchName",
       "==",
-      name
+      normalizeFoodName(name)
     )
   );
 

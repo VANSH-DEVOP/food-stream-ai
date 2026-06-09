@@ -4,7 +4,11 @@ import {
   setDoc,
   Timestamp,
 } from "firebase/firestore";
-
+import {
+  collection,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export async function createUserDocument(
@@ -74,4 +78,32 @@ export async function getUser(
   }
 
   return userDoc.data();
+}
+
+export async function getAllUsers() {
+
+  const snapshot =
+    await getDocs(
+      collection(db, "users")
+    );
+
+  return snapshot.docs.map(
+    (doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })
+  );
+}
+
+export async function updateUserRole(
+  uid: string,
+  role: "user" | "admin"
+) {
+
+  await updateDoc(
+    doc(db, "users", uid),
+    {
+      role,
+    }
+  );
 }

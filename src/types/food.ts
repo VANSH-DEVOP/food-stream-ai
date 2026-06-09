@@ -3,6 +3,8 @@ export interface FoodItem {
 
   name: string;
 
+  searchName?: string;
+
   description: string;
 
   category: string;

@@ -57,7 +57,7 @@ export default function FoodManagement({
 
                 <button
                 onClick={() =>
-                    onAdd
+                    onAdd()
                 }
                 className="rounded-xl bg-orange-500 px-4 py-2 font-semibold text-black transition hover:scale-105 hover:bg-orange-400"
                 >

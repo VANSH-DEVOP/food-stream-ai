@@ -2,7 +2,7 @@
 
 import {
   useAIInsight,
-} from "@/hooks/useAIInsight";
+} from "@/archive/ai/useAIInsight";
 
 interface Props {
   foods: {
