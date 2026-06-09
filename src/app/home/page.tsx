@@ -11,12 +11,15 @@ import { useFilterStore } from "@/store/filter-store";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import OrderSummaryModal from '@/components/order/order-summary-modal';
-import { useOrders } from "@/hooks/useOrders";
+import { useAllOrders } from "@/hooks/useAllOrders";
 import ProfileInsights from "@/components/home/profile-insights";
 import { useFavorites } from "@/hooks/useFavorites";
 import HomeFooter from "@/components/layout/home-footer";
 import Footer from "@/components/layout/footer";
 import { useState } from "react";
+import {
+  getTopFoods,
+} from "@/services/admin-analytics-service";
 
 import AIChatButton
 from "@/components/chat/ai-chat-button";
@@ -45,6 +48,11 @@ export default function Home() {
       setIsChatOpen,
     ] = useState(false);
 
+    const [
+      search,
+      setSearch,
+    ] = useState("");
+
     const spiceLevel =
       useFilterStore(
         (state) => state.spiceLevel
@@ -52,7 +60,12 @@ export default function Home() {
 
     const {
       orders,
-    } = useOrders(user?.uid ?? "");
+    } = useAllOrders();
+
+    const topFoodNames =
+      getTopFoods(orders).map(
+        ([name]) => name
+      );
 
     const {
       favorites,
@@ -70,6 +83,36 @@ export default function Home() {
     foods.filter(
       (food) =>
         food.isAvailable !== false
+    );
+
+    const trendingFoods =
+    topFoodNames
+      .map(
+        (name) =>
+          availableFoods.find(
+            (food) =>
+              food.name === name
+          )
+      )
+      .filter(Boolean) as typeof availableFoods;
+
+    const filteredFoods =
+    availableFoods.filter(
+      (food) =>
+        food.name
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          ) ||
+
+        food.tags.some(
+          (tag) =>
+            tag
+              .toLowerCase()
+              .includes(
+                search.toLowerCase()
+              )
+        )
     );
 
     const safeProfile =
@@ -159,54 +202,100 @@ return (
           />
         )}
 
-      <div id="recommendations">
-
-        <div className="mb-4 rounded-lg border border-orange-500/20 bg-orange-500/5 px-4 py-3">
-          <p className="font-medium text-orange-400">
-            🤖 Personalized Recommendations
-          </p>
-
-          <p className="text-sm text-zinc-400">
-            Based on order history, favorite cuisine, category, and spice preferences.
-          </p>
-        </div>
-
-        <FoodRow
-          title={`Recommended For ${selectedProfile.name}`}
-          items={recommendedFoods}
-          favorites={favorites}
-          refreshFavorites={refreshFavorites}
-          showReasons={true}
+      <div className="mb-8">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) =>
+            setSearch(
+              e.target.value
+            )
+          }
+          placeholder="Search foods..."
+          className="w-full rounded-xl bg-zinc-900 border border-zinc-800 p-4 outline-none focus:border-orange-500"
         />
-
       </div>
 
-      <FoodRow
-        title="Trending Now"
-        items={availableFoods}
-        favorites={favorites}
-        refreshFavorites={refreshFavorites}
-      />
+      {
+        search.trim() && (
+          <FoodRow
+            title={`🔍 Search Results`}
+            items={filteredFoods}
+            favorites={favorites}
+            refreshFavorites={refreshFavorites}
+          />
+        )
+      }
 
-      <FoodRow
-        title="Veg Specials"
-        items={availableFoods.filter(
-          (item) =>
-            item.category === "Veg"
-        )}
-        favorites={favorites}
-        refreshFavorites={refreshFavorites}
-      />
+      {
+        search.trim() &&
+        filteredFoods.length === 0 && (
+          <div className="rounded-xl bg-zinc-900 p-6 text-center text-zinc-400">
+            No foods found.
+          </div>
+        )
+      }
 
-      <FoodRow
-        title="Non-Veg Specials"
-        items={availableFoods.filter(
-          (item) =>
-            item.category === "Non-Veg"
-        )}
-        favorites={favorites}
-        refreshFavorites={refreshFavorites}
-      />
+      {
+        !search.trim() && (
+          <>
+            <div id="recommendations">
+
+              <div className="mb-4 rounded-lg border border-orange-500/20 bg-orange-500/5 px-4 py-3">
+                <p className="font-medium text-orange-400">
+                   Personalized Recommendations
+                </p>
+
+                <p className="text-sm text-zinc-400">
+                  Based on order history, favorite cuisine, category, and spice preferences.
+                </p>
+              </div>
+
+              <FoodRow
+                title={`Recommended For ${selectedProfile.name}`}
+                items={recommendedFoods}
+                favorites={favorites}
+                refreshFavorites={refreshFavorites}
+                showReasons={true}
+              />
+
+            </div>
+
+            <FoodRow
+              title="Trending Now"
+              items={
+                trendingFoods.length >0 ?
+                trendingFoods:
+                availableFoods.slice(0,10)
+              }
+              favorites={favorites}
+              refreshFavorites={refreshFavorites}
+            />
+
+            <FoodRow
+              title="Veg Specials"
+              items={availableFoods.filter(
+                (item) =>
+                  item.category === "Veg"
+              )}
+              favorites={favorites}
+              refreshFavorites={refreshFavorites}
+            />
+
+            <FoodRow
+              title="Non-Veg Specials"
+              items={availableFoods.filter(
+                (item) =>
+                  item.category === "Non-Veg"
+              )}
+              favorites={favorites}
+              refreshFavorites={refreshFavorites}
+            />
+          </>
+        )
+      }
+
+      
     </div>
     
     <Footer/>

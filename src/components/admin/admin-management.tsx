@@ -3,6 +3,7 @@
 import { AppUser } from "@/types";
 import { updateUserRole } from "@/services/user-service";
 import { toast } from "sonner";
+import { useState } from "react";
 
 interface AdminManagementProps {
   users: AppUser[];
@@ -16,12 +17,25 @@ export default function AdminManagement({
   superAdminUid,
 }: AdminManagementProps) {
 
+    const [search, setSearch] =
+    useState("");
+
     const manageableUsers =
     users.filter(
         (user) =>
         user.id !==
         superAdminUid
     );
+
+    const filteredUsers =
+    manageableUsers.filter(
+        (user) =>
+        user.email
+            .toLowerCase()
+            .includes(
+            search.toLowerCase()
+            )
+     );
 
     async function handleRoleChange(
         uid: string,
@@ -43,13 +57,29 @@ export default function AdminManagement({
     return (
   <div className="mt-10 rounded-2xl bg-zinc-900 p-6">
 
-    <h2 className="mb-6 text-2xl font-bold">
-      Admin Management
-    </h2>
+    <div className="mb-6 flex flex-wrap items-center gap-4">
 
-    <div className="space-y-3">
+        <h2 className="whitespace-nowrap text-2xl font-bold">
+            Admin Management
+        </h2>
 
-      {manageableUsers.map((user) => (
+        <input
+            type="text"
+            placeholder="Search users..."
+            value={search}
+            onChange={(e) =>
+            setSearch(
+                e.target.value
+            )
+            }
+            className="flex-1 rounded-lg bg-zinc-800 px-4 py-2"
+        />
+
+    </div>
+
+    <div className="max-h-[500px] space-y-3 overflow-y-auto food-scroll pr-2">
+
+      {filteredUsers.map((user) => (
 
         <div
           key={user.id}
@@ -97,6 +127,14 @@ export default function AdminManagement({
       ))}
 
     </div>
+
+    {
+    filteredUsers.length === 0 && (
+        <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-400">
+        No users found.
+        </div>
+    )
+    }
 
   </div>
 );

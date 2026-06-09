@@ -36,7 +36,7 @@ export default function ProfileInsights({
   return (
     <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
       <h2 className="mb-4 text-2xl font-bold text-orange-500">
-        🍽 Food Preference Insights
+         Food Preference Insights
       </h2>
 
       <div className="space-y-2 text-zinc-300">

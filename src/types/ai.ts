@@ -6,4 +6,6 @@ export interface AIChatResult {
     foodId: string;
     quantity: number;
   } | null;
+
+  recommendedFoodId?: string;
 }

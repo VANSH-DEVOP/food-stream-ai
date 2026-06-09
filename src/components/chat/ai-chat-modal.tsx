@@ -4,6 +4,9 @@ import { useState } from "react";
 
 import { askAI } from "@/services/ai-chat-client";
 
+import { useCartStore }
+from "@/store/cart-store";
+
 import {
   FoodItem,
   UserProfile,
@@ -19,6 +22,12 @@ interface Props {
   profile: UserProfile;
 }
 
+type AIAction = {
+  type: "add_to_cart";
+  foodId: string;
+  quantity: number;
+} | null;
+
 export default function AIChatModal({
   isOpen,
   onClose,
@@ -30,6 +39,11 @@ export default function AIChatModal({
     question,
     setQuestion,
   ] = useState("");
+
+  const addToCart =
+  useCartStore(
+    (state) => state.addToCart
+  );
 
   const [
     response,
@@ -44,7 +58,16 @@ export default function AIChatModal({
   const [
     action,
     setAction,
-  ] = useState(null);
+  ] = useState<AIAction>(
+    null
+  );
+
+  const [
+    lastRecommendedFood,
+    setLastRecommendedFood,
+  ] = useState<FoodItem | null>(
+    null
+  );
 
   if (!isOpen) {
     return null;
@@ -60,6 +83,49 @@ export default function AIChatModal({
 
       setLoading(true);
 
+      const lowerQuestion =
+      question
+        .toLowerCase()
+        .trim();
+
+      const contextualCommands = [
+        "order that",
+        "order this",
+        "add that",
+        "add this",
+        "order it",
+        "add it",
+        "i'll take that",
+        "sounds good",
+      ];
+
+      if (
+        contextualCommands.some(
+          command =>
+            lowerQuestion.includes(
+              command
+            )
+        )
+      ) {
+
+        if (
+          lastRecommendedFood
+        ) {
+
+          addToCart({
+            ...lastRecommendedFood,
+            profileId: profile.id,
+            profileName: profile.name,
+          });
+
+          setResponse(
+            `I've added ${lastRecommendedFood.name} to your cart.`
+          );
+
+          return;
+        }
+      }
+
       const answer =
         await askAI(
           question,
@@ -67,6 +133,51 @@ export default function AIChatModal({
           profile
         );
 
+
+      const matchedFood =
+      foods.find(
+        food =>
+          answer.response
+            ?.toLowerCase()
+            .includes(
+              food.name.toLowerCase()
+            )
+      );
+
+      if (
+  answer.action?.type ===
+  "add_to_cart"
+) {
+
+  const food =
+    foods.find(
+      item =>
+        item.id ===
+        answer.action.foodId
+    );
+
+  if (food) {
+
+    addToCart({
+      ...food,
+      profileId: profile.id,
+      profileName: profile.name,
+    });
+
+    setLastRecommendedFood(
+      food
+    );
+  }
+}
+
+      if (
+        matchedFood &&
+        !answer.action
+      ) {
+        setLastRecommendedFood(
+          matchedFood
+        );
+      }
         console.log(
           "CHATBOT RESULT:",
           answer

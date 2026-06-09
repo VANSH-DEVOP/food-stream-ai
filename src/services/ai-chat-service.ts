@@ -15,6 +15,62 @@ export async function generateChatResponse(
   profile: UserProfile
 ): Promise<AIChatResult> {
 
+  function normalizeFoodName(
+    value: string
+  ) {
+    return value
+      .toLowerCase()
+      .trim()
+      .replace(
+        /[^a-z0-9 ]/g,
+        ""
+      )
+      .replace(
+        /\s+/g,
+        " "
+      );
+  }
+
+  function getFallbackRecommendation(
+    foods: FoodItem[],
+    profile: UserProfile
+  ) {
+
+    const isNewProfile =
+    !profile.cuisine ||
+    !profile.favoriteCategory ||
+    !profile.spiceLevel;
+
+    if (isNewProfile) {
+
+      const popularFoods =
+        foods.slice(0, 5);
+
+      return popularFoods[0];
+    }
+
+    const matches =
+      foods.filter(
+        (food) =>
+          food.cuisine ===
+            profile.cuisine &&
+          food.category ===
+            profile.favoriteCategory &&
+          food.spiceLevel ===
+            profile.spiceLevel
+      );
+
+    const recommendation =
+      matches[0] ??
+      foods[0];
+
+    if (!recommendation) {
+      return null;
+    }
+
+    return recommendation;
+  }
+
   const menu =
     foods
       .slice(0, 15)
@@ -109,17 +165,16 @@ Rules:
     ) {
 
       const normalized =
-      result.foodName
-        .toLowerCase()
-        .trim();
+      normalizeFoodName(
+        result.foodName
+      );
 
-      const matchedFood =
+    const matchedFood =
       foods.find(
         food =>
-          food.name
-            .toLowerCase()
-            .trim() ===
-          normalized
+          normalizeFoodName(
+            food.name
+          ) === normalized
       );
 
       return {
@@ -155,11 +210,21 @@ Rules:
           profile.favoriteCategory
       );
 
+      if (
+        candidateFoods.length === 0
+      ) {
+        return {
+          response:
+            "I couldn't find a surprise item matching your preferences.",
+          action: null,
+        };
+      }
+
       const randomFood =
         candidateFoods[
           Math.floor(
             Math.random() *
-            foods.length
+            candidateFoods.length
           )
         ];
 
@@ -190,14 +255,30 @@ Rules:
 
     console.error(error);
 
-    return {
-      response: `
-I'm currently experiencing high demand.
+    const fallbackFood =
+    getFallbackRecommendation(
+      foods,
+      profile
+    );
 
-Please try again shortly.
-      `,
+if (fallbackFood) {
+
+  return {
+    response:
+        `While my AI service is busy right now, I'd recommend ${fallbackFood.name} for you.
+
+  It matches your preference for ${profile.cuisine} cuisine, ${profile.favoriteCategory} dishes and ${profile.spiceLevel} spice level.
+
+  Price: ₹${fallbackFood.price}.`,
       action: null,
     };
+  }
+
+  return {
+    response:
+      "I'm currently experiencing high demand. Please try again shortly.",
+    action: null,
+  };
 
   }
 }
