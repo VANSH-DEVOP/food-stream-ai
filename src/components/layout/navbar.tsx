@@ -51,6 +51,8 @@ export default function Navbar() {
         {user?.role ===
           "admin" && (
           <button
+          aria-label="admin"
+          type="button"
             onClick={() =>
               router.push("/admin")
             }
@@ -61,6 +63,8 @@ export default function Navbar() {
         )}
 
         <button
+        aria-label="analytics"
+        type="button"
           onClick={() =>
             router.push("/analytics")
           }
@@ -70,6 +74,8 @@ export default function Navbar() {
         </button>
 
         <button
+        aria-label="profiles"
+        type="button"
           onClick={() =>
             router.push("/profiles")
           }
@@ -79,6 +85,8 @@ export default function Navbar() {
         </button>
 
         <button
+        aria-label="orders"
+        type="button"
           onClick={() =>
             router.push("/orders")
           }
@@ -88,6 +96,8 @@ export default function Navbar() {
         </button>
 
         <button
+        aria-label="filters"
+        type="button"
           onClick={toggleFilter}
           className="rounded-lg bg-zinc-800 px-4 py-2 hover:bg-zinc-700"
         >
@@ -95,6 +105,8 @@ export default function Navbar() {
         </button>
 
         <button
+        aria-label="logout"
+        type="button"
           onClick={handleLogout}
           className="rounded-lg bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-600"
         >

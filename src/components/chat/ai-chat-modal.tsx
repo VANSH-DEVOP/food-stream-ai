@@ -56,13 +56,6 @@ export default function AIChatModal({
   ] = useState(false);
 
   const [
-    action,
-    setAction,
-  ] = useState<AIAction>(
-    null
-  );
-
-  const [
     lastRecommendedFood,
     setLastRecommendedFood,
   ] = useState<FoodItem | null>(
@@ -183,9 +176,6 @@ export default function AIChatModal({
           answer
         );
       setResponse(answer.response);
-      setAction(
-        answer.action
-      );
 
     } finally {
 
@@ -206,6 +196,8 @@ export default function AIChatModal({
           </h2>
 
           <button
+          aria-label="chat close button"
+          type="button"
             onClick={onClose}
           >
             ✕
@@ -216,6 +208,8 @@ export default function AIChatModal({
         <div className="mb-4 flex flex-wrap gap-2">
 
           <button
+          aria-label="recommendations chip"
+          type="button"
             onClick={() =>
               setQuestion(
                 "Suggest dinner under ₹300"
@@ -227,6 +221,8 @@ export default function AIChatModal({
           </button>
 
           <button
+          aria-label="recommendations chip2"
+          type="button"
             onClick={() =>
               setQuestion(
                 "Recommend something spicy"
@@ -238,6 +234,8 @@ export default function AIChatModal({
           </button>
 
           <button
+          aria-label="recommendations chip3"
+          type="button"
             onClick={() =>
               setQuestion(
                 `What should ${profile.name} order today?`
@@ -251,6 +249,7 @@ export default function AIChatModal({
         </div>
 
         <textarea
+          aria-label="Ask Question"
           value={question}
           onChange={(e) =>
             setQuestion(
@@ -262,6 +261,8 @@ export default function AIChatModal({
         />
 
         <button
+        aria-label="Ask AI button"
+        type="button"
           onClick={handleAsk}
           disabled={loading}
           className="mb-4 w-full rounded-lg bg-orange-500 p-3 font-semibold text-black"

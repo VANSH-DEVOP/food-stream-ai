@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import {
   getFavorites,
@@ -23,27 +23,30 @@ export function useFavorites(
     setLoading,
   ] = useState(true);
 
-  async function refreshFavorites() {
-    if (!userId) {
-      setFavorites([]);
-      setLoading(false);
+  const refreshFavorites =
+useCallback(async () => {
 
-      return;
-    }
+  if (!userId) {
 
-    const data =
-      await getFavorites(
-        userId
-      );
-
-    setFavorites(data);
+    setFavorites([]);
 
     setLoading(false);
+
+    return;
   }
+
+  const data =
+    await getFavorites(userId);
+
+  setFavorites(data);
+
+  setLoading(false);
+
+}, [userId]);
 
   useEffect(() => {
     refreshFavorites();
-  }, [userId]);
+  }, [refreshFavorites]);
 
   return {
     favorites,

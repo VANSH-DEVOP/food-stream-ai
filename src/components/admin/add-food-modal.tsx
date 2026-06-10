@@ -57,6 +57,8 @@ export default function AddFoodModal({
         />
 
         <button
+        aria-label="cancel add food"
+        type="button"
           onClick={onClose}
           className="mt-4 w-full rounded-lg bg-zinc-700 p-3"
         >

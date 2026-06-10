@@ -1,9 +1,12 @@
+import Image from "next/image";
 export default function HeroBanner() {
   return (
     <section className="relative h-[500px] overflow-hidden rounded-3xl">
-      <img
+      <Image
         src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
         alt="Hero Food"
+        fill
+        sizes="100vw"
         className="h-full w-full object-cover"
       />
 
@@ -21,6 +24,8 @@ export default function HeroBanner() {
         </p>
 
         <button
+        aria-label="hero-banner"
+        type="button"
           onClick={() => {
             document
               .getElementById("recommendations")

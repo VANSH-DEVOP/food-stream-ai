@@ -149,6 +149,8 @@ export default function LoginPage() {
           <div className="mb-8 flex rounded-xl bg-zinc-800 p-1">
 
             <button
+              aria-label="Login button"
+              type="button"
               onClick={() => {
                 setIsSignup(false);
                 setError("");
@@ -163,6 +165,8 @@ export default function LoginPage() {
             </button>
 
             <button
+            aria-label="Sign-up button"
+            type="button"
               onClick={() => {
                 setIsSignup(true);
                 setError("");
@@ -181,6 +185,7 @@ export default function LoginPage() {
           <div className="space-y-5">
 
             <input
+              aria-label="Enter Email"
               type="email"
               placeholder="Email address"
               value={email}
@@ -201,6 +206,7 @@ export default function LoginPage() {
             />
 
             <input
+              aria-label="Enter Password"
               type="password"
               placeholder="Password"
               value={password}
@@ -227,6 +233,8 @@ export default function LoginPage() {
             )}
 
             <button
+            aria-label="Continue button"
+            type="button"
               onClick={handleAuth}
               disabled={loading}
               className="

@@ -36,6 +36,8 @@ export default function FilterDrawer() {
             </h2>
 
             <button
+            aria-label="Close filter"
+            type="button"
                 onClick={closeFilter}
                 className="rounded-lg px-3 py-1 text-2xl transition hover:bg-zinc-800"
             >
@@ -141,6 +143,8 @@ export default function FilterDrawer() {
         </div>
 
         <button
+        aria-label="reset filter"
+        type="button"
           onClick={resetFilters}
           className="w-full rounded-lg bg-red-500 p-3 font-semibold"
         >

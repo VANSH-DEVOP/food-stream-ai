@@ -64,6 +64,7 @@ export default function AdminManagement({
         </h2>
 
         <input
+            aria-label="Search Users"
             type="text"
             placeholder="Search users..."
             value={search}
@@ -105,6 +106,8 @@ export default function AdminManagement({
           </div>
 
           <button
+          aria-label="Admin-button"
+          type="button"
             onClick={() =>
               handleRoleChange(
                 user.id,

@@ -44,6 +44,7 @@ export default function FoodManagement({
                 </h2>
 
                  <input
+                    aria-label="Search Foods"
                     type="text"
                     placeholder="Search foods..."
                     value={search}
@@ -56,6 +57,8 @@ export default function FoodManagement({
                 />
 
                 <button
+                aria-label="add food button"
+                type="button"
                 onClick={() =>
                     onAdd()
                 }
@@ -93,6 +96,8 @@ export default function FoodManagement({
                         <div className="flex gap-2">
 
                         <button
+                        aria-label="Available toggle button"
+                        type="button"
                         onClick={async () => {
 
                             await updateFood(
@@ -116,6 +121,8 @@ export default function FoodManagement({
                         </button>
 
                         <button
+                        aria-label="Edit food button"
+                        type="button"
                             className="rounded-lg bg-blue-500 px-3 py-2 transition hover:bg-blue-600 hover:scale-105"
                             onClick={() => {
                                 onEdit(food)
@@ -125,6 +132,8 @@ export default function FoodManagement({
                         </button>
 
                         <button
+                        aria-label="delete food button"
+                        type="button"
                         onClick={() =>
                             onDelete(food)
                         }

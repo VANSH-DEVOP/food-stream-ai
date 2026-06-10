@@ -10,6 +10,8 @@ export default function AIChatButton({
 
   return (
     <button
+    aria-label="Ai chat button"
+    type="button"
     onClick={onClick}
     className="
         fixed

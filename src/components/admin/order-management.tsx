@@ -35,6 +35,7 @@ export default function OrderManagement({
         </h2>
 
         <input
+          aria-label="Search Orders"
           value={orderSearch}
           onChange={(e) =>
             setOrderSearch(

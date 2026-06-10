@@ -77,11 +77,15 @@ export default function FoodCard({
     if (!selectedProfile) return null;
   return (
     <div className="flex h-[470px] min-w-[320px] flex-col overflow-hidden rounded-2xl bg-zinc-900">
-      <img
-        src={item.image}
-        alt={item.name}
-        className="h-40 w-full object-cover"
-      />
+        <img
+          src={
+            item.image?.startsWith("http")
+            ? item.image
+            : "/placeholder-food.jpg"
+          }
+          alt={item.name}
+          className="h-40 w-full object-cover"
+        />
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between">
@@ -90,6 +94,8 @@ export default function FoodCard({
           </h2>
 
           <button
+          aria-label="Fav add button"
+          type="button"
             onClick={handleFavorite}
             className="rounded-full p-2 text-2xl transition hover:bg-zinc-800"
           >
@@ -138,6 +144,8 @@ export default function FoodCard({
         </div>
 
         <button
+        aria-label="Add-to-cart button"
+        type="button"
           className="mt-auto w-full rounded-lg bg-orange-500 p-3 font-semibold text-black transition hover:bg-orange-400"
           onClick={() =>
             addToCart({

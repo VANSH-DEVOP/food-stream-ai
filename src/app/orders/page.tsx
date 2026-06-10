@@ -230,6 +230,8 @@ export default function OrdersPage() {
                 </div>
 
                 <button
+                aria-label="Re-order button"
+                type="button"
                   onClick={() => {
 
                     const validItems =

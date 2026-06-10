@@ -3,7 +3,6 @@
 import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
 import { useOrderStore } from "@/store/order-store";
-
 export default function CartDrawer() {
   const items = useCartStore(
     (state) => state.items
@@ -83,6 +82,8 @@ export default function CartDrawer() {
             </h2>
 
             <button
+            aria-label="Close cart"
+            type="button"
                 onClick={closeCart}
                 className="text-2xl"
             >
@@ -110,11 +111,15 @@ export default function CartDrawer() {
                         key={`${item.id}-${item.profileId}`}
                         className="rounded-xl bg-zinc-900 p-4"
                     >
-                        <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-24 w-full rounded-lg object-cover"
-                        />
+                            <img
+                            src={
+                                item.image?.startsWith("http")
+                                ? item.image
+                                : "/placeholder-food.jpg"
+                            }
+                            alt={item.name}
+                            className="h-24 w-full rounded-lg object-cover"
+                            />
 
                         <h3 className="mt-3 text-lg font-semibold">
                         {item.name}
@@ -126,6 +131,8 @@ export default function CartDrawer() {
 
                         <div className="mt-3 flex items-center gap-3">
                         <button
+                        aria-label="decrease item"
+                        type="button"
                             onClick={() =>
                             decreaseQuantity(
                                 item.id,
@@ -142,6 +149,8 @@ export default function CartDrawer() {
                         </span>
 
                         <button
+                        aria-label="add item"
+                        type="button"
                             onClick={() =>
                             increaseQuantity(
                                 item.id,
@@ -155,6 +164,8 @@ export default function CartDrawer() {
                         </div>
 
                         <button
+                        aria-label="remove item"
+                        type="button"
                         onClick={() =>
                             removeFromCart(
                             item.id,
@@ -206,6 +217,8 @@ export default function CartDrawer() {
         </div>
 
         <button
+        aria-label="Place Order"
+        type="button"
         onClick={openOrderSummary}
         className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black transition hover:bg-orange-400"
         >

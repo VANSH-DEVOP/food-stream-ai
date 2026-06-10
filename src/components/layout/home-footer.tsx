@@ -29,7 +29,10 @@ export default function HomeFooter() {
         <div className="h-8 w-px bg-zinc-700" />
 
         <div className="flex items-center gap-3">
-          <button className="rounded-lg bg-orange-500 px-4 py-2 font-semibold text-black">
+          <button 
+          aria-label="Add to cart button"
+          type="button"
+          className="rounded-lg bg-orange-500 px-4 py-2 font-semibold text-black">
             Add to Cart
           </button>
           <span>One-Click Ordering</span>

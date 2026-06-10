@@ -177,6 +177,8 @@ export default function OrderSummaryModal() {
           </h2>
 
           <button
+          aria-label="Close order summary"
+          type="button"
             onClick={
               closeOrderSummary
             }
@@ -263,6 +265,8 @@ export default function OrderSummaryModal() {
         </div>
 
         <button
+        aria-label="Process Payment"
+        type="button"
         disabled={isProcessing}
           onClick={handleConfirmOrder}
           className="mt-6 w-full rounded-xl bg-orange-500 p-3 font-bold text-black"

@@ -139,6 +139,7 @@ export default function FoodForm({
     <div className="space-y-4">
 
         <input
+        aria-label="Enter Food Name"
         value={name}
         onChange={(e) =>
             setName(
@@ -150,6 +151,7 @@ export default function FoodForm({
         />
 
         <textarea
+        aria-label="Food Description"
         value={description}
         onChange={(e) =>
             setDescription(
@@ -161,6 +163,7 @@ export default function FoodForm({
         />
 
         <input
+        aria-label="Enter Price"
         type="number"
         value={price}
         onChange={(e) =>
@@ -216,6 +219,7 @@ export default function FoodForm({
         </select>
 
         <input
+        aria-label="Enter Img-url"
         value={image}
         onChange={(e) =>
             setImage(
@@ -227,6 +231,7 @@ export default function FoodForm({
         />
 
         <input
+        aria-label="Enter Tags"
         value={tags}
         onChange={(e) =>
             setTags(
@@ -240,6 +245,7 @@ export default function FoodForm({
         <label className="flex items-center gap-2">
 
         <input
+        aria-label="Availability"
         type="checkbox"
         checked={isAvailable}
         onChange={(e) =>
@@ -253,6 +259,8 @@ export default function FoodForm({
         </label>
 
         <button
+        aria-label="submit food button"
+        type="button"
         onClick={handleSubmit}
         className="mt-6 w-full rounded-lg bg-orange-500 p-3 font-semibold text-black"
         >

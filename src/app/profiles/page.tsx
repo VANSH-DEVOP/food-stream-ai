@@ -91,6 +91,7 @@ export default function ProfilesPage() {
       {profiles.length < 4 && (
         <div className="mb-8 flex gap-4">
           <input
+            aria-label="Enter Profile Name"
             value={newProfile}
             onChange={(e) =>
               setNewProfile(e.target.value)
@@ -160,6 +161,8 @@ export default function ProfilesPage() {
             </option>
           </select>
           <button
+          aria-label="Add profile button"
+          type="button"
             onClick={async () => {
               if (
                 !user ||
@@ -200,6 +203,8 @@ export default function ProfilesPage() {
             className="relative cursor-pointer rounded-2xl border border-zinc-800 bg-zinc-900 p-8 transition hover:scale-105 hover:border-orange-500"
           >
             <button
+            aria-label="Close profile button"
+            type="button"
               onClick={async (e) => {
                 e.stopPropagation();
               try{

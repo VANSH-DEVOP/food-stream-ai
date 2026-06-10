@@ -79,6 +79,8 @@ async function handleEditFood(
           />       
 
           <button
+          aria-label="cencel editfood button"
+          type="button"
             onClick={onClose}
             className="mt-4 w-full rounded-lg bg-zinc-700 p-3"
           >

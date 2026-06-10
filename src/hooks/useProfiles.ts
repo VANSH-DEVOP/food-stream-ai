@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { getProfiles } from "@/services/profile-service";
 
@@ -13,20 +13,23 @@ export function useProfiles(
   const [loading, setLoading] =
     useState(true);
 
-  async function refreshProfiles() {
-    if (!userId) return;
+  const refreshProfiles =
+useCallback(async () => {
 
-    const data =
-      await getProfiles(userId);
+  if (!userId) return;
 
-    setProfiles(data);
+  const data =
+    await getProfiles(userId);
 
-    setLoading(false);
-  }
+  setProfiles(data);
+
+  setLoading(false);
+
+}, [userId]);
 
   useEffect(() => {
     refreshProfiles();
-  }, [userId]);
+  }, [refreshProfiles]);
 
   return {
     profiles,

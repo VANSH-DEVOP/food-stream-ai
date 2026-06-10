@@ -204,6 +204,7 @@ return (
 
       <div className="mb-8">
         <input
+          aria-label="Search Food"
           type="text"
           value={search}
           onChange={(e) =>

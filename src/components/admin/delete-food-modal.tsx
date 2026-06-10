@@ -41,6 +41,8 @@ export default function DeleteFoodModal({
         <div className="mt-6 flex gap-3">
 
           <button
+          aria-label="cancel delete button"
+          type="button"
             onClick={onClose}
             className="flex-1 rounded-lg bg-zinc-700 p-3"
           >
@@ -48,6 +50,8 @@ export default function DeleteFoodModal({
           </button>
 
           <button
+          aria-label="delete button"
+          type="button"
             onClick={onDelete}
             className="flex-1 rounded-lg bg-red-500 p-3 font-semibold transition hover:bg-red-600"
           >
