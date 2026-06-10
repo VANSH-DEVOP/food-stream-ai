@@ -17,8 +17,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FoodStream AI",
-  description: "AI Powered Food Recommendation Platform",
+  title: {
+    default: "FoodStream AI",
+    template: "%s | FoodStream AI",
+  },
+
+  description:
+    "AI-powered food recommendation platform with personalized suggestions, multi-profile ordering, favorites, analytics, and AI chat assistant.",
+
+  keywords: [
+    "FoodStream AI",
+    "food recommendation",
+    "AI food assistant",
+    "Next.js",
+    "Firebase",
+    "food ordering",
+  ],
+
+  authors: [
+    {
+      name: "Vansh Bansal",
+    },
+  ],
+
+  openGraph: {
+    title: "FoodStream AI",
+    description:
+      "AI-powered food recommendation platform.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
