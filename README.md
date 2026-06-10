@@ -144,7 +144,7 @@ src/
 ### 1. Clone Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/VANSH-DEVOP/food-stream-ai
 cd food-stream-ai
 ```
 
