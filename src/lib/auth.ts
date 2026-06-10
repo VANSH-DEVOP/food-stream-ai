@@ -7,6 +7,19 @@ import {
 import { createUserDocument } from "@/services/user-service";
 
 import { auth } from "./firebase";
+import {
+  sendPasswordResetEmail,
+} from "firebase/auth";
+
+
+export async function forgotPassword(
+  email: string
+) {
+  return sendPasswordResetEmail(
+    auth,
+    email
+  );
+}
 
 export async function signup(
   email: string,

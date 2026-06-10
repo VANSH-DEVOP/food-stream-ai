@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
-import { login, signup } from "@/lib/auth";
+import { login, signup, forgotPassword } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 
@@ -67,6 +67,32 @@ export default function LoginPage() {
       }
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+
+    if (!email.trim()) {
+      setError(
+        "Please enter your email first."
+      );
+      return;
+    }
+
+    try {
+
+      await forgotPassword(email);
+
+      setError(
+        "Password reset email sent. Check your inbox."
+      );
+
+    } catch {
+
+      setError(
+        "Unable to send reset email."
+      );
+
     }
   }
 
@@ -225,6 +251,16 @@ export default function LoginPage() {
                 focus:border-orange-500
               "
             />
+
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm text-orange-400 hover:text-orange-300"
+              >
+                Forgot Password?
+              </button>
+            </div>
 
             {error && (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
