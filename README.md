@@ -271,11 +271,6 @@ Configure all environment variables before deployment.
 
 ## 🎯 Future Enhancements
 
-* Forgot Password Flow
-* Payment Gateway Integration
-* AI Recommendation Engine V2
-* AI Food Explanation Engine
-* AI Customer Support Chatbot
 * Real-Time Order Tracking
 * Email Notifications
 * Push Notifications
