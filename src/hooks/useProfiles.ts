@@ -4,6 +4,17 @@ import { getProfiles } from "@/services/profile-service";
 
 import { UserProfile } from "@/types";
 
+function loadProfiles(
+  userId?: string
+): Promise<UserProfile[]> {
+
+  if (!userId) {
+    return Promise.resolve([]);
+  }
+
+  return getProfiles(userId);
+}
+
 export function useProfiles(
   userId?: string
 ) {
@@ -16,10 +27,8 @@ export function useProfiles(
   const refreshProfiles =
 useCallback(async () => {
 
-  if (!userId) return;
-
   const data =
-    await getProfiles(userId);
+    await loadProfiles(userId);
 
   setProfiles(data);
 
@@ -28,8 +37,34 @@ useCallback(async () => {
 }, [userId]);
 
   useEffect(() => {
-    refreshProfiles();
-  }, [refreshProfiles]);
+
+    let cancelled = false;
+
+    loadProfiles(userId)
+      .then((data) => {
+
+        if (cancelled) return;
+
+        setProfiles(data);
+
+        setLoading(false);
+
+      })
+      .catch((error) => {
+
+        if (cancelled) return;
+
+        console.error(error);
+
+        setLoading(false);
+
+      });
+
+    return () => {
+      cancelled = true;
+    };
+
+  }, [userId]);
 
   return {
     profiles,

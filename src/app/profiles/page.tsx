@@ -27,6 +27,10 @@ export default function ProfilesPage() {
     (state) => state.user
   );
 
+  const isAuthLoading = useAuthStore(
+    (state) => state.isLoading
+  );
+
   const [newProfile, setNewProfile] =
   useState("");
 
@@ -59,14 +63,24 @@ export default function ProfilesPage() {
     refreshProfiles,
   } = useProfiles(user?.uid);
 
+  // Firebase resolves the session asynchronously; redirecting before it
+  // settles bounces an already signed-in user back to /login on refresh.
   useEffect(() => {
+    if (isAuthLoading) {
+      return;
+    }
+
     if (!user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, isAuthLoading, router]);
 
-  if (!user) {
-    return null;
+  if (isAuthLoading || !user) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+        Loading...
+      </main>
+    );
   }
 
   if (loading) {

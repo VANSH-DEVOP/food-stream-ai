@@ -33,10 +33,20 @@ export default function AdminPage() {
     (state) => state.user
   );
 
+  const isAdmin =
+    user?.role === "admin";
+
+  const isSuperAdmin =
+  isAdmin &&
+  user?.uid ===
+  process.env
+    .NEXT_PUBLIC_SUPER_ADMIN_UID;
+
+  // Both of these read admin-only collections; subscribing before the role
+  // is known just produces permission-denied errors.
   const {
     orders,
-    loading,
-  } = useAllOrders();
+  } = useAllOrders(isAdmin);
 
   const {
     foods,
@@ -73,25 +83,24 @@ export default function AdminPage() {
   const {
     users,
     refreshUsers,
-  } = useUsers();
+  } = useUsers(isSuperAdmin);
 
-  const isSuperAdmin =
-  user?.uid ===
-  process.env
-    .NEXT_PUBLIC_SUPER_ADMIN_UID;
-
+  // Gate on auth resolution, not on the orders subscription — otherwise a
+  // fast orders load bounces a signed-in admin to /login.
   useEffect(() => {
-    if (!loading) {
-        if (!user) {
-        router.push("/login");
+    if (isLoading) {
         return;
-        }
-
-        if (user.role !== "admin") {
-        router.push("/home");
-        }
     }
-    }, [user, loading, router]);
+
+    if (!user) {
+    router.push("/login");
+    return;
+    }
+
+    if (user.role !== "admin") {
+    router.push("/home");
+    }
+    }, [user, isLoading, router]);
 
   if (isLoading) {
     return (

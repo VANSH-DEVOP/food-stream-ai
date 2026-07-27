@@ -1,4 +1,6 @@
 import {auth} from "@/lib/firebase";
+import { PriceBreakdown } from "@/lib/pricing";
+import { CartItem } from "@/types";
 
 
 interface RazorpayPaymentResponse {
@@ -13,9 +15,42 @@ interface RazorpayOrder {
   currency: string;
 }
 
-export async function createPaymentOrder(
-  amount: number
+interface CreatedPaymentOrder {
+  order: RazorpayOrder;
+  breakdown: PriceBreakdown;
+}
+
+// The cart keys items by food *and* profile, so the same dish can appear
+// more than once. Collapse them so each food is priced a single time.
+function mergeByFoodId(
+  items: CartItem[]
 ) {
+
+  const quantities =
+    new Map<string, number>();
+
+  items.forEach((item) => {
+    quantities.set(
+      item.id,
+      (quantities.get(item.id) ?? 0) +
+        item.quantity
+    );
+  });
+
+  return Array.from(
+    quantities,
+    ([id, quantity]) => ({
+      id,
+      quantity,
+    })
+  );
+}
+
+// Only ids and quantities are sent: the server looks up prices itself, so
+// the amount charged can't be dictated by the browser.
+export async function createPaymentOrder(
+  items: CartItem[]
+): Promise<CreatedPaymentOrder> {
   const token =
     await auth.currentUser
       ?.getIdToken();
@@ -35,13 +70,21 @@ export async function createPaymentOrder(
         },
 
         body: JSON.stringify({
-          amount,
+          items:
+            mergeByFoodId(items),
         }),
       }
     );
 
   const data =
     await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ??
+        "Could not start payment."
+    );
+  }
 
   return data;
 }

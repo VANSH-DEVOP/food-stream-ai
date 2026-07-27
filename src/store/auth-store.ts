@@ -57,6 +57,45 @@ export const useAuthStore = create<AuthState>()(
 })),
     {
       name: "auth-storage",
+
+      // Only the profile picker's selection is safe to persist. The user
+      // object (including `role`) and the loading flag must always come
+      // from Firebase on boot — persisting them lets anyone hand-edit
+      // localStorage into an admin session, and a persisted
+      // `isLoading: false` makes guards run before auth has resolved.
+      partialize: (state) => ({
+        selectedProfile:
+          state.selectedProfile,
+      }),
+
+      // partialize only governs what is *written*. Anyone who used the app
+      // before that existed still has a blob containing `user` and
+      // `isLoading: false` in localStorage, which rehydration would happily
+      // merge back in. Bumping the version discards it once.
+      version: 1,
+
+      migrate: (
+        persisted,
+        version
+      ) => {
+
+        if (version >= 1) {
+          return persisted as {
+            selectedProfile:
+              AuthState["selectedProfile"];
+          };
+        }
+
+        return {
+          selectedProfile:
+            (
+              persisted as {
+                selectedProfile?:
+                  AuthState["selectedProfile"];
+              } | null
+            )?.selectedProfile ?? null,
+        };
+      },
     }
   )
 );

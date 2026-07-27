@@ -23,6 +23,12 @@ export default function AuthProvider({
     (state) => state.setLoading
   );
 
+  const setSelectedProfile =
+    useAuthStore(
+      (state) =>
+        state.setSelectedProfile
+    );
+
   useEffect(() => {
 
   const unsubscribe =
@@ -31,6 +37,20 @@ export default function AuthProvider({
       async (user) => {
 
         if (user) {
+
+          // The profile picker's selection is persisted across reloads,
+          // so drop it if it belongs to a different account.
+          const {
+            selectedProfile,
+          } = useAuthStore.getState();
+
+          if (
+            selectedProfile &&
+            selectedProfile.userId !==
+              user.uid
+          ) {
+            setSelectedProfile(null);
+          }
 
           const userData =
             await getUser(
@@ -55,6 +75,8 @@ export default function AuthProvider({
 
           setUser(null);
 
+          setSelectedProfile(null);
+
         }
 
         setLoading(false);
@@ -65,7 +87,11 @@ export default function AuthProvider({
   return () =>
     unsubscribe();
 
-}, [setUser, setLoading]);
+}, [
+  setUser,
+  setLoading,
+  setSelectedProfile,
+]);
 
   return <>{children}</>;
 }

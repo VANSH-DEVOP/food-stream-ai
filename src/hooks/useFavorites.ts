@@ -8,6 +8,17 @@ import {
 
 import { Favorite } from "@/types";
 
+function loadFavorites(
+  userId?: string
+): Promise<Favorite[]> {
+
+  if (!userId) {
+    return Promise.resolve([]);
+  }
+
+  return getFavorites(userId);
+}
+
 export function useFavorites(
   userId?: string
 ) {
@@ -26,17 +37,8 @@ export function useFavorites(
   const refreshFavorites =
 useCallback(async () => {
 
-  if (!userId) {
-
-    setFavorites([]);
-
-    setLoading(false);
-
-    return;
-  }
-
   const data =
-    await getFavorites(userId);
+    await loadFavorites(userId);
 
   setFavorites(data);
 
@@ -45,8 +47,34 @@ useCallback(async () => {
 }, [userId]);
 
   useEffect(() => {
-    refreshFavorites();
-  }, [refreshFavorites]);
+
+    let cancelled = false;
+
+    loadFavorites(userId)
+      .then((data) => {
+
+        if (cancelled) return;
+
+        setFavorites(data);
+
+        setLoading(false);
+
+      })
+      .catch((error) => {
+
+        if (cancelled) return;
+
+        console.error(error);
+
+        setLoading(false);
+
+      });
+
+    return () => {
+      cancelled = true;
+    };
+
+  }, [userId]);
 
   return {
     favorites,

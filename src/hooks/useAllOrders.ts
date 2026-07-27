@@ -9,7 +9,11 @@ import {
 
 import { Order } from "@/types";
 
-export function useAllOrders() {
+// Reading the whole orders collection is admin-only in the security rules,
+// so the caller must say whether the current viewer is allowed to listen.
+export function useAllOrders(
+  enabled = true
+) {
 
   const [
     orders,
@@ -22,6 +26,10 @@ export function useAllOrders() {
   ] = useState(true);
 
   useEffect(() => {
+
+    if (!enabled) {
+      return;
+    }
 
     const unsubscribe =
       subscribeToAllOrders(
@@ -38,7 +46,7 @@ export function useAllOrders() {
 
     return unsubscribe;
 
-  }, []);
+  }, [enabled]);
 
   return {
     orders,

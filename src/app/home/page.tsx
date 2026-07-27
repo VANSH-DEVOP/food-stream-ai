@@ -11,7 +11,7 @@ import { useFilterStore } from "@/store/filter-store";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import OrderSummaryModal from '@/components/order/order-summary-modal';
-import { useAllOrders } from "@/hooks/useAllOrders";
+import { useOrders } from "@/hooks/useOrders";
 import ProfileInsights from "@/components/home/profile-insights";
 import { useFavorites } from "@/hooks/useFavorites";
 import HomeFooter from "@/components/layout/home-footer";
@@ -58,9 +58,12 @@ export default function Home() {
         (state) => state.spiceLevel
       );
 
+    // Only the signed-in user's orders: security rules deny a read of the
+    // whole collection to non-admins, which silently left `orders` empty
+    // and broke recommendations and profile insights for every customer.
     const {
       orders,
-    } = useAllOrders();
+    } = useOrders(user?.uid);
 
     const topFoodNames =
       getTopFoods(orders).map(
@@ -263,7 +266,11 @@ return (
             </div>
 
             <FoodRow
-              title="Trending Now"
+              title={
+                trendingFoods.length > 0
+                  ? "Order Again"
+                  : "Popular Right Now"
+              }
               items={
                 trendingFoods.length >0 ?
                 trendingFoods:

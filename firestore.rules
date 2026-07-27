@@ -7,11 +7,25 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isOwner(userId) {
+      return isSignedIn() &&
+        request.auth.uid == userId;
+    }
+
     function isAdmin() {
-    return request.auth != null &&
-      get(
-        /databases/$(database)/documents/users/$(request.auth.uid)
-      ).data.role == "admin";
+      return isSignedIn() &&
+        exists(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        ) &&
+        get(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        ).data.role == "admin";
+    }
+
+    function changedKeys() {
+      return request.resource.data
+        .diff(resource.data)
+        .affectedKeys();
     }
 
     match /foods/{foodId} {
@@ -21,86 +35,102 @@ service cloud.firestore {
 
     match /profiles/{profileId} {
       allow create:
-        if isSignedIn() &&
-        request.resource.data.userId ==
-        request.auth.uid;
+        if isOwner(request.resource.data.userId);
 
-      allow read, update, delete:
+      allow read, delete:
         if isAdmin() ||
-        (
-          isSignedIn() &&
-          resource.data.userId ==
-          request.auth.uid
-        );
+        isOwner(resource.data.userId);
+
+      // A profile must never be reassigned to another account.
+      allow update:
+        if (
+          isAdmin() ||
+          isOwner(resource.data.userId)
+        ) &&
+        request.resource.data.userId ==
+        resource.data.userId;
     }
 
     match /favorites/{favoriteId} {
       allow create:
-        if isSignedIn() &&
-        request.resource.data.userId ==
-        request.auth.uid;
+        if isOwner(request.resource.data.userId);
 
-      allow read, update, delete:
+      allow read, delete:
         if isAdmin() ||
-        (
-          isSignedIn() &&
-          resource.data.userId ==
-          request.auth.uid
-        );
+        isOwner(resource.data.userId);
+
+      allow update:
+        if (
+          isAdmin() ||
+          isOwner(resource.data.userId)
+        ) &&
+        request.resource.data.userId ==
+        resource.data.userId;
     }
 
     match /orders/{orderId} {
+      // Clients may only file their own orders, and only as new
+      // unfulfilled ones — status is the admin's to advance.
       allow create:
-        if isSignedIn() &&
-        request.resource.data.userId ==
-        request.auth.uid;
+        if isOwner(request.resource.data.userId) &&
+        request.resource.data.status == "Pending" &&
+        request.resource.data.total is number &&
+        request.resource.data.total >= 0 &&
+        request.resource.data.subtotal is number &&
+        request.resource.data.subtotal >= 0;
 
       allow read:
         if isAdmin() ||
-        (
-          isSignedIn() &&
-          resource.data.userId ==
-          request.auth.uid
-        );
+        isOwner(resource.data.userId);
 
       allow update:
         if isAdmin();
+
+      allow delete: if false;
     }
 
     match /payments/{paymentId} {
       allow create:
-        if isSignedIn() &&
-        request.resource.data.userId ==
-        request.auth.uid;
+        if isOwner(request.resource.data.userId) &&
+        request.resource.data.amount is number &&
+        request.resource.data.amount >= 0;
 
       allow read:
         if isAdmin() ||
-        (
-          isSignedIn() &&
-          resource.data.userId ==
-          request.auth.uid
-        );
+        isOwner(resource.data.userId);
 
       allow update, delete:
         if isAdmin();
     }
 
     match /users/{userId} {
+      // Self-registration only, and never straight into an admin role.
       allow create:
-        if request.auth != null &&
-        request.auth.uid == userId;
+        if isOwner(userId) &&
+        request.resource.data.role == "user";
 
-      allow read:
-        if request.auth != null &&
-        request.auth.uid == userId;
+      allow get:
+        if isAdmin() ||
+        isOwner(userId);
 
+      // Only the admin dashboard enumerates users.
+      allow list: if isAdmin();
+
+      // Users may edit their own document but never their own role;
+      // admins may change other users' roles and nothing else.
       allow update:
-        if request.auth != null &&
-        request.auth.uid == userId &&
-        request.resource.data.role == resource.data.role;
+        if (
+          isOwner(userId) &&
+          request.resource.data.role == resource.data.role
+        ) ||
+        (
+          isAdmin() &&
+          request.auth.uid != userId &&
+          changedKeys().hasOnly(['role']) &&
+          request.resource.data.role in ['user', 'admin']
+        );
 
-      allow delete:
-        if false;
+      allow delete: if false;
     }
   }
 }

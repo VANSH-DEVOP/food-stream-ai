@@ -1,4 +1,5 @@
 import {
+  App,
   cert,
   getApps,
   initializeApp,
@@ -8,26 +9,71 @@ import {
   getAuth,
 } from "firebase-admin/auth";
 
-const app =
-  getApps().length
-    ? getApps()[0]
-    : initializeApp({
-        credential: cert({
-          projectId:
-            process.env.FIREBASE_PROJECT_ID,
+import {
+  getFirestore,
+} from "firebase-admin/firestore";
 
-          clientEmail:
-            process.env.FIREBASE_CLIENT_EMAIL,
+function requireEnv(
+  name: string
+) {
+  const value =
+    process.env[name];
 
-          privateKey:
-            process.env
-              .FIREBASE_PRIVATE_KEY
-              ?.replace(
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable: ${name}`
+    );
+  }
+
+  return value;
+}
+
+let app: App | undefined;
+
+// Initialised lazily so that importing a route module (during `next build`,
+// for example) never requires service-account credentials to be present.
+function getAdminApp() {
+
+  if (app) {
+    return app;
+  }
+
+  app =
+    getApps().length
+      ? getApps()[0]
+      : initializeApp({
+          credential: cert({
+            projectId:
+              requireEnv(
+                "FIREBASE_PROJECT_ID"
+              ),
+
+            clientEmail:
+              requireEnv(
+                "FIREBASE_CLIENT_EMAIL"
+              ),
+
+            privateKey:
+              requireEnv(
+                "FIREBASE_PRIVATE_KEY"
+              ).replace(
                 /\\n/g,
                 "\n"
               ),
-        }),
-      });
+          }),
+        });
 
-export const adminAuth =
-  getAuth(app);
+  return app;
+}
+
+export function getAdminAuth() {
+  return getAuth(
+    getAdminApp()
+  );
+}
+
+export function getAdminDb() {
+  return getFirestore(
+    getAdminApp()
+  );
+}

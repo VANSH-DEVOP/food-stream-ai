@@ -3,6 +3,7 @@
 import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
 import { useOrderStore } from "@/store/order-store";
+import { priceOrder } from "@/lib/pricing";
 export default function CartDrawer() {
   const items = useCartStore(
     (state) => state.items
@@ -34,12 +35,14 @@ export default function CartDrawer() {
     (state) => state.closeCart
     );
 
-    const subtotal = items.reduce(
-    (total, item) =>
-        total +
-        item.price * item.quantity,
-    0
-    );
+    // Same breakdown the review modal and the payment API use, so the
+    // "Total" here matches what actually gets charged.
+    const {
+      subtotal,
+      deliveryFee,
+      gst,
+      total,
+    } = priceOrder(items);
 
     const groupedItems =
     items.reduce(
@@ -61,11 +64,6 @@ export default function CartDrawer() {
         typeof items
         >
     );
-
-    const deliveryFee = 49;
-
-    const total =
-    subtotal + deliveryFee;
 
     const openOrderSummary =
     useOrderStore(
@@ -205,6 +203,14 @@ export default function CartDrawer() {
 
             <span>
             ₹{deliveryFee}
+            </span>
+        </div>
+
+        <div className="mb-2 flex justify-between">
+            <span>GST (5%)</span>
+
+            <span>
+            ₹{gst}
             </span>
         </div>
 

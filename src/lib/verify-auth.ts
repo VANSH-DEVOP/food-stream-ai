@@ -2,7 +2,7 @@ import { NextRequest }
 from "next/server";
 
 import {
-  adminAuth,
+  getAdminAuth,
 } from "./firebase-admin";
 
 export async function verifyAuth(
@@ -24,15 +24,24 @@ export async function verifyAuth(
   }
 
   const token =
-    authHeader.replace(
-      "Bearer ",
-      ""
-    );
+    authHeader
+      .slice("Bearer ".length)
+      .trim();
+
+  if (!token) {
+    return null;
+  }
 
   try {
 
-    return await adminAuth
-      .verifyIdToken(token);
+    // checkRevoked rejects tokens whose session was signed out or whose
+    // account was disabled before the hour-long ID token would have
+    // expired on its own.
+    return await getAdminAuth()
+      .verifyIdToken(
+        token,
+        true
+      );
 
   } catch {
 

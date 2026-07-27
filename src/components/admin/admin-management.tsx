@@ -30,7 +30,7 @@ export default function AdminManagement({
     const filteredUsers =
     manageableUsers.filter(
         (user) =>
-        user.email
+        (user.email ?? "")
             .toLowerCase()
             .includes(
             search.toLowerCase()
@@ -100,7 +100,7 @@ export default function AdminManagement({
                 : "rounded bg-zinc-700 px-2 py-1 text-zinc-300"
             }
             >
-            {user.role.toUpperCase()}
+            {(user.role ?? "user").toUpperCase()}
             </span>
 
           </div>

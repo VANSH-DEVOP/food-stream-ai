@@ -7,6 +7,34 @@ const requests =
     }
   >();
 
+// Entries are only revisited when their own key is hit again, so without a
+// periodic sweep the map grows by one entry per user and never shrinks.
+const SWEEP_INTERVAL_MS = 60_000;
+
+let lastSweep = Date.now();
+
+function sweep(now: number) {
+
+  if (
+    now - lastSweep <
+    SWEEP_INTERVAL_MS
+  ) {
+    return;
+  }
+
+  lastSweep = now;
+
+  for (const [
+    key,
+    entry,
+  ] of requests) {
+
+    if (now > entry.resetTime) {
+      requests.delete(key);
+    }
+  }
+}
+
 export function rateLimit(
   key: string,
   limit: number,
@@ -14,6 +42,8 @@ export function rateLimit(
 ) {
 
   const now = Date.now();
+
+  sweep(now);
 
   const existing =
     requests.get(key);

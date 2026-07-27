@@ -14,6 +14,7 @@ import {
   savePayment,
 } from "@/services/payment-record-service";
 import { toast } from "sonner";
+import { priceOrder } from "@/lib/pricing";
 
 export default function OrderSummaryModal() {
   const isOpen =
@@ -47,23 +48,14 @@ export default function OrderSummaryModal() {
 
   if (!isOpen) return null;
 
-  const subtotal = items.reduce(
-    (total, item) =>
-      total +
-      item.price * item.quantity,
-    0
-  );
-
-  const deliveryFee = 49;
-
-  const gst = Math.round(
-    subtotal * 0.05
-  );
-
-  const total =
-    subtotal +
-    deliveryFee +
-    gst;
+  // Display only — the server reprices the cart and is the authority on
+  // what is actually charged and recorded.
+  const {
+    subtotal,
+    deliveryFee,
+    gst,
+    total,
+  } = priceOrder(items);
 
 
   async function handleConfirmOrder() {
@@ -77,9 +69,12 @@ export default function OrderSummaryModal() {
     try {
       setIsProcessing(true);
 
-      const razorpayOrder =
+      const {
+        order: razorpayOrder,
+        breakdown,
+      } =
       await createPaymentOrder(
-        total
+        items
       );
 
       const paymentResult =
@@ -96,7 +91,8 @@ export default function OrderSummaryModal() {
         !verification.success
       ) {
         throw new Error(
-          "Payment verification failed"
+          verification.error ??
+            "Payment verification failed"
         );
       }
 
@@ -107,7 +103,8 @@ export default function OrderSummaryModal() {
         razorpayOrderId:
           paymentResult.razorpay_order_id,
 
-        amount: total,
+        amount:
+          breakdown.total,
 
         userId:
           user.uid,
@@ -127,13 +124,17 @@ export default function OrderSummaryModal() {
 
         items,
 
-        subtotal,
+        subtotal:
+          breakdown.subtotal,
 
-        deliveryFee,
+        deliveryFee:
+          breakdown.deliveryFee,
 
-        gst,
+        gst:
+          breakdown.gst,
 
-        total,
+        total:
+          breakdown.total,
 
         paymentStatus:
           "paid",

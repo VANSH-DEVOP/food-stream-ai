@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -11,7 +12,24 @@ import {
 
 import { AppUser } from "@/types";
 
-export function useUsers() {
+function loadUsers(
+  enabled: boolean
+): Promise<AppUser[]> {
+
+  if (!enabled) {
+    return Promise.resolve([]);
+  }
+
+  return getAllUsers() as Promise<
+    AppUser[]
+  >;
+}
+
+// Listing every user is admin-only in the security rules, so the caller
+// must say whether the current viewer is allowed to ask.
+export function useUsers(
+  enabled = true
+) {
 
   const [users, setUsers] =
     useState<AppUser[]>([]);
@@ -19,21 +37,47 @@ export function useUsers() {
   const [loading, setLoading] =
     useState(true);
 
-  async function refreshUsers() {
+  const refreshUsers =
+    useCallback(async () => {
 
-    const data =
-      await getAllUsers();
+      const data =
+        await loadUsers(enabled);
 
-    setUsers(
-      data as AppUser[]
-    );
+      setUsers(data);
 
-    setLoading(false);
-  }
+      setLoading(false);
+
+    }, [enabled]);
 
   useEffect(() => {
-    refreshUsers();
-  }, []);
+
+    let cancelled = false;
+
+    loadUsers(enabled)
+      .then((data) => {
+
+        if (cancelled) return;
+
+        setUsers(data);
+
+        setLoading(false);
+
+      })
+      .catch((error) => {
+
+        if (cancelled) return;
+
+        console.error(error);
+
+        setLoading(false);
+
+      });
+
+    return () => {
+      cancelled = true;
+    };
+
+  }, [enabled]);
 
   return {
     users,
